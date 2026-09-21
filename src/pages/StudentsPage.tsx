@@ -80,7 +80,7 @@ export default function StudentsPage() {
                 {students.map((student) => (
                   <tr key={student.id}>
                     <td>{student.admissionNumber ?? "—"}</td>
-                    <td>{student.name ?? [student.firstName, student.lastName].filter(Boolean).join(" ") || "—"}</td>
+                    <td>{student.name ?? ([student.firstName, student.lastName].filter(Boolean).join(" ") || "—")}</td>
                     <td>{[student.className, student.sectionName].filter(Boolean).join(" / ") || "—"}</td>
                     <td>{student.email ?? "—"}</td>
                     <td><span className="badge">{student.status ?? "—"}</span></td>
