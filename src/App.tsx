@@ -1,29 +1,11 @@
-import { Link, Route, Routes } from "react-router-dom";
-import { useAuthStore } from "./auth/authStore";
+import { Route, Routes } from "react-router-dom";
+import { ROLES } from "./auth/roles";
 import ProtectedRoute from "./auth/ProtectedRoute";
-import { HomePage } from "./pages/HomePage";
+import AppShell from "./components/AppShell";
 import LoginPage from "./pages/LoginPage";
+import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
-
-function AuthenticatedHome() {
-  const user = useAuthStore((state) => state.user);
-  const logout = useAuthStore((state) => state.logout);
-
-  return (
-    <>
-      <header className="topbar">
-        <Link className="brand" to="/">AMSS</Link>
-        <nav className="nav-actions">
-          {user?.username && <span className="session-user">{user.username}</span>}
-          <button type="button" onClick={logout}>Logout</button>
-        </nav>
-      </header>
-      <main className="page">
-        <HomePage />
-      </main>
-    </>
-  );
-}
+import ForbiddenPage from "./pages/ForbiddenPage";
 
 export default function App() {
   return (
@@ -31,8 +13,18 @@ export default function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route element={<ProtectedRoute />}>
-          <Route path="/" element={<AuthenticatedHome />} />
+          <Route element={<AppShell />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/students" element={<HomePage />} />
+            <Route path="/academics" element={<HomePage />} />
+            <Route path="/finance" element={<HomePage />} />
+            <Route path="/ai-assistant" element={<HomePage />} />
+          </Route>
         </Route>
+        <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]} />}>
+          <Route path="/admin-only" element={<HomePage />} />
+        </Route>
+        <Route path="/forbidden" element={<ForbiddenPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </div>
