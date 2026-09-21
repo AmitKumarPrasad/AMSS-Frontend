@@ -18,7 +18,7 @@ a { color: inherit; }
   border-bottom: 1px solid #e8ecf3;
 }
 .brand { font-size: 22px; font-weight: 700; text-decoration: none; }
-.badge {
+.nav-actions { align-items: center; display: flex; gap: 14px; }\n.session-user { color: #56647d; font-size: 14px; }\n.nav-actions button, .auth-card button { border: 0; border-radius: 7px; padding: 10px 14px; background: #1f5eff; color: #fff; cursor: pointer; }\n.auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }\n.auth-card { width: min(100%, 420px); background: #fff; border: 1px solid #e8ecf3; border-radius: 18px; padding: 32px; box-shadow: 0 12px 40px rgba(23, 32, 51, .08); }\n.auth-card form { display: grid; gap: 16px; }\n.auth-card label { display: grid; gap: 7px; font-weight: 600; }\n.auth-card input { width: 100%; padding: 11px 12px; border: 1px solid #b9c2d0; border-radius: 7px; }\n.auth-card p { color: #66738a; line-height: 1.5; }\n.auth-card [role="alert"] { color: #b42318; }\n.badge {
   border: 1px solid #dfe5ef;
   border-radius: 999px;
   color: #4b5870;
