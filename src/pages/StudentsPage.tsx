@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { getApiErrorInfo } from "../api/errorHandling";
 import { getStudents } from "../api/students";
 
 const PAGE_SIZE = 20;
@@ -16,6 +17,7 @@ export default function StudentsPage() {
 
   const students = query.data?.content ?? [];
   const totalPages = query.data?.totalPages ?? 1;
+  const errorMessage = query.isError ? getApiErrorInfo(query.error).message : "";
 
   function updateSearch(value: string) {
     setPage(0);
@@ -58,9 +60,12 @@ export default function StudentsPage() {
 
       {query.isLoading && <p className="state-message">Loading students…</p>}
       {query.isError && (
-        <p className="state-message error" role="alert">
-          Unable to load students. Please try again.
-        </p>
+        <div className="state-message error" role="alert">
+          <p>{errorMessage}</p>
+          <button type="button" onClick={() => query.refetch()} disabled={query.isFetching}>
+            {query.isFetching ? "Retrying…" : "Retry"}
+          </button>
+        </div>
       )}
 
       {!query.isLoading && !query.isError && (
