@@ -9,7 +9,11 @@
 - [x] Finance UI
 - [x] Notifications and documents UI
 - [x] AI Assistant UI and conversation state
-- [ ] Frontend integration/regression coverage
+- [x] Frontend integration/regression coverage
+- [ ] Attendance management UI
+- [ ] Exams and grades UI
+- [ ] Parent/student self-service UI
+- [ ] Admin configuration and remaining workflow integration
 
 ## Working Rule
 Implementation → PR → CI → fix if red → GREEN → merge → next feature.
