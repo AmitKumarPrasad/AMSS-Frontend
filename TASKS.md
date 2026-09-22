@@ -7,7 +7,7 @@
 - [x] Student list UI with backend pagination, search and status filtering
 - [x] Academic management UI
 - [x] Finance UI
-- [ ] Notifications and documents UI
+- [x] Notifications and documents UI
 - [ ] AI Assistant UI and conversation state
 - [ ] Frontend integration/regression coverage
 
