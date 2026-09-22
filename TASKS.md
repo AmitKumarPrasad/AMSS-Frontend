@@ -15,6 +15,7 @@
 - [x] Parent/student self-service UI
 - [x] Admin operations dashboard and audit activity
 - [x] API request correlation and timeout hardening
+- [x] Authentication workflow integration through shared API client
 - [ ] Remaining workflow integration
 
 ## Working Rule

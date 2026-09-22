@@ -1,6 +1,4 @@
-import axios from "axios";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
+import { apiClient } from "./client";
 
 export interface LoginRequest {
   username: string;
@@ -20,10 +18,9 @@ export interface LoginResponse {
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
-  const response = await axios.post<LoginResponse>(
-    `${API_BASE_URL}/api/v1/auth/login`,
+  const response = await apiClient.post<LoginResponse>(
+    "/api/v1/auth/login",
     request,
-    { headers: { "Content-Type": "application/json" } }
   );
   return response.data;
 }
