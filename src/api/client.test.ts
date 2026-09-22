@@ -20,7 +20,7 @@ describe("api client", () => {
     vi.clearAllMocks();
   });
 
-  it("attaches the bearer token to requests", async () => {
+  it("attaches the bearer token and request id to requests", async () => {
     const logout = vi.fn();
     getState.mockReturnValue({ accessToken: "token-123", logout });
 
@@ -32,6 +32,11 @@ describe("api client", () => {
     } as never);
 
     expect(request?.headers?.Authorization).toBe("Bearer token-123");
+    expect(request?.headers?.["X-Request-ID"]).toMatch(/^amss-/);
+  });
+
+  it("configures a bounded request timeout", () => {
+    expect(apiClient.defaults.timeout).toBe(15_000);
   });
 
   it("logs the user out on a 401 response", async () => {
