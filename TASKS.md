@@ -17,6 +17,7 @@
 - [x] API request correlation and timeout hardening
 - [x] Authentication workflow integration through shared API client
 - [x] Normalized API error handling
+- [x] Student workflow error and retry integration
 - [ ] Remaining workflow integration
 
 ## Working Rule
