@@ -10,10 +10,11 @@
 - [x] Notifications and documents UI
 - [x] AI Assistant UI and conversation state
 - [x] Frontend integration/regression coverage
-- [ ] Attendance management UI
-- [ ] Exams and grades UI
-- [ ] Parent/student self-service UI
-- [ ] Admin configuration and remaining workflow integration
+- [x] Attendance management UI
+- [x] Exams and grades UI
+- [x] Parent/student self-service UI
+- [x] Admin operations dashboard and audit activity
+- [ ] Remaining workflow integration
 
 ## Working Rule
 Implementation → PR → CI → fix if red → GREEN → merge → next feature.
