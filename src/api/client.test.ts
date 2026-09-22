@@ -1,7 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+type MockAuthState = {
+  accessToken: string | null;
+  logout: ReturnType<typeof vi.fn>;
+};
+
 const { getState } = vi.hoisted(() => ({
-  getState: vi.fn(() => ({ accessToken: null, logout: vi.fn() })),
+  getState: vi.fn<() => MockAuthState>(() => ({ accessToken: null, logout: vi.fn() })),
 }));
 
 vi.mock("../auth/authStore", () => ({
@@ -19,7 +24,10 @@ describe("api client", () => {
     const logout = vi.fn();
     getState.mockReturnValue({ accessToken: "token-123", logout });
 
-    const request = await apiClient.interceptors.request.handlers[0].fulfilled?.({
+    const requestHandler = apiClient.interceptors.request.handlers
+      ?.find((handler) => handler.fulfilled)?.fulfilled;
+
+    const request = await requestHandler?.({
       headers: {},
     } as never);
 
@@ -32,9 +40,9 @@ describe("api client", () => {
 
     const error = { response: { status: 401 } };
     const rejected = apiClient.interceptors.response.handlers
-      .find((handler) => handler.rejected)?.rejected;
+      ?.find((handler) => handler.rejected)?.rejected;
 
-    await expect(rejected?.(error)).rejects.toBe(error);
+    await expect(rejected?.(error as never)).rejects.toBe(error);
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
@@ -44,9 +52,9 @@ describe("api client", () => {
 
     const error = { response: { status: 500 } };
     const rejected = apiClient.interceptors.response.handlers
-      .find((handler) => handler.rejected)?.rejected;
+      ?.find((handler) => handler.rejected)?.rejected;
 
-    await expect(rejected?.(error)).rejects.toBe(error);
+    await expect(rejected?.(error as never)).rejects.toBe(error);
     expect(logout).not.toHaveBeenCalled();
   });
 });
