@@ -30,3 +30,13 @@
 .secondary-button { border: 1px solid #c7cfdb; border-radius: 7px; background: #fff; color: #172033; padding: 8px 12px; cursor: pointer; }
 .academic-note { margin-top: 16px; font-size: 13px; }
 @media (max-width: 800px) { .academic-summary, .academic-grid { grid-template-columns: 1fr; } .academic-tabs { overflow-x: auto; } }
+
+.finance-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.finance-summary article { display: grid; gap: 5px; background: #fff; border: 1px solid #e8ecf3; border-radius: 14px; padding: 18px; }
+.finance-summary strong { font-size: 28px; }
+.finance-summary span, .finance-copy { color: #66738a; font-size: 14px; }
+.finance-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.finance-list { color: #56647d; line-height: 2; padding-left: 20px; }
+.progress-track { height: 10px; background: #edf0f5; border-radius: 999px; overflow: hidden; margin: 22px 0 10px; }
+.progress-track span { display: block; height: 100%; background: #1f5eff; border-radius: inherit; }
+@media (max-width: 800px) { .finance-summary, .finance-grid { grid-template-columns: 1fr; } }
