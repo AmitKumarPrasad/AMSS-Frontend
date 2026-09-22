@@ -21,6 +21,7 @@
 - [x] Login workflow error integration
 - [x] Attendance workflow error integration
 - [x] Assessments workflow error integration
+- [x] AI Assistant error workflow coverage
 - [ ] Remaining workflow integration
 
 ## Working Rule
