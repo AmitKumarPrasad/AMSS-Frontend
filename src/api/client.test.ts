@@ -32,7 +32,9 @@ describe("api client", () => {
     } as never);
 
     expect(request?.headers?.Authorization).toBe("Bearer token-123");
-    expect(request?.headers?.["X-Request-ID"]).toMatch(/^amss-/);
+    expect(request?.headers?.["X-Request-ID"]).toMatch(
+      /^(amss-[a-z0-9-]+|[0-9a-f-]{36})$/,
+    );
   });
 
   it("configures a bounded request timeout", () => {
