@@ -31,11 +31,10 @@ describe("api client", () => {
     getState.mockReturnValue({ accessToken: "token-123", logout });
 
     const error = { response: { status: 401 } };
+    const rejected = apiClient.interceptors.response.handlers
+      .find((handler) => handler.rejected)?.rejected;
 
-    await expect(
-      apiClient.interceptors.response.handlers[1].rejected?.(error),
-    ).rejects.toBe(error);
-
+    await expect(rejected?.(error)).rejects.toBe(error);
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
@@ -44,11 +43,10 @@ describe("api client", () => {
     getState.mockReturnValue({ accessToken: "token-123", logout });
 
     const error = { response: { status: 500 } };
+    const rejected = apiClient.interceptors.response.handlers
+      .find((handler) => handler.rejected)?.rejected;
 
-    await expect(
-      apiClient.interceptors.response.handlers[1].rejected?.(error),
-    ).rejects.toBe(error);
-
+    await expect(rejected?.(error)).rejects.toBe(error);
     expect(logout).not.toHaveBeenCalled();
   });
 });
