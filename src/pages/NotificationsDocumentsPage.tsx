@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { getApiErrorInfo } from "../api/errorHandling";
 
 type CommunicationTab = "notifications" | "documents";
 
