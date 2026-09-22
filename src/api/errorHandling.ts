@@ -44,7 +44,7 @@ export function getApiErrorInfo(error: unknown): ApiErrorInfo {
     return { kind: "validation", message: "Please check the submitted information.", status, requestId };
   }
 
-  if (status >= 500) {
+  if (status !== undefined && status >= 500) {
     return { kind: "server", message: "The server could not complete the request.", status, requestId };
   }
 
