@@ -8,6 +8,7 @@ import { NotFoundPage } from "./pages/NotFoundPage";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import StudentsPage from "./pages/StudentsPage";
 import AcademicsPage from "./pages/AcademicsPage";
+import FinancePage from "./pages/FinancePage";
 
 export default function App() {
   return (
@@ -19,7 +20,7 @@ export default function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/academics" element={<AcademicsPage />} />
-            <Route path="/finance" element={<HomePage />} />
+            <Route path="/finance" element={<FinancePage />} />
             <Route path="/ai-assistant" element={<HomePage />} />
           </Route>
         </Route>
