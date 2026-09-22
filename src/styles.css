@@ -1,41 +1,14 @@
-:root {
-  font-family: Inter, system-ui, sans-serif;
-  color: #172033;
-  background: #f5f7fb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-}
-* { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
-a { color: inherit; }
-.app-shell { min-height: 100vh; }
-.topbar {
-  align-items: center;
-  display: flex;
-  justify-content: space-between;
-  padding: 20px clamp(20px, 5vw, 72px);
-  background: #fff;
-  border-bottom: 1px solid #e8ecf3;
-}
-.brand { font-size: 22px; font-weight: 700; text-decoration: none; }
-.nav-actions { align-items: center; display: flex; gap: 14px; }\n.session-user { color: #56647d; font-size: 14px; }\n.nav-actions button, .auth-card button { border: 0; border-radius: 7px; padding: 10px 14px; background: #1f5eff; color: #fff; cursor: pointer; }\n.auth-page { min-height: 100vh; display: grid; place-items: center; padding: 24px; }\n.auth-card { width: min(100%, 420px); background: #fff; border: 1px solid #e8ecf3; border-radius: 18px; padding: 32px; box-shadow: 0 12px 40px rgba(23, 32, 51, .08); }\n.auth-card form { display: grid; gap: 16px; }\n.auth-card label { display: grid; gap: 7px; font-weight: 600; }\n.auth-card input { width: 100%; padding: 11px 12px; border: 1px solid #b9c2d0; border-radius: 7px; }\n.auth-card p { color: #66738a; line-height: 1.5; }\n.auth-card [role="alert"] { color: #b42318; }\n.badge {
-  border: 1px solid #dfe5ef;
-  border-radius: 999px;
-  color: #4b5870;
-  font-size: 12px;
-  padding: 7px 11px;
-}
-.shell-layout { display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: calc(100vh - 73px); }\n.sidebar { background: #fff; border-right: 1px solid #e8ecf3; padding: 24px 16px; display: grid; align-content: start; gap: 8px; }\n.sidebar a { padding: 11px 12px; border-radius: 8px; text-decoration: none; color: #4b5870; }\n.sidebar a:hover { background: #f1f4f9; color: #172033; }\n.shell-content { max-width: none; width: 100%; }\n.page { margin: 0 auto; max-width: 1100px; padding: 72px 24px; }
-.hero { max-width: 850px; }
-.eyebrow { color: #56647d; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; }
-h1 { font-size: clamp(42px, 7vw, 74px); line-height: .98; margin: 18px 0; }
-.subtitle { color: #5e6b82; font-size: 18px; line-height: 1.7; max-width: 720px; }
-.cards { display: grid; gap: 18px; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 42px; }
-.cards article { background: #fff; border: 1px solid #e8ecf3; border-radius: 18px; padding: 24px; }
-.cards h2 { margin-top: 0; }
-.cards p { color: #66738a; line-height: 1.6; }
-.empty-state { padding: 120px 20px; text-align: center; }
-@media (max-width: 700px) {
-  .topbar { align-items: flex-start; flex-direction: column; gap: 12px; }
-  .cards { grid-template-columns: 1fr; }
-}
+ .page-section { max-width: 1200px; margin: 0 auto; padding: 48px 24px; }
+.page-heading { display: flex; justify-content: space-between; gap: 24px; margin-bottom: 28px; }
+.toolbar { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 20px; }
+.toolbar label { display: grid; gap: 7px; color: #4b5870; font-size: 14px; font-weight: 600; min-width: 240px; }
+.toolbar input, .toolbar select { padding: 10px 12px; border: 1px solid #b9c2d0; border-radius: 7px; background: #fff; color: #172033; }
+.table-card { overflow-x: auto; background: #fff; border: 1px solid #e8ecf3; border-radius: 14px; }
+.table-card table { width: 100%; border-collapse: collapse; min-width: 760px; }
+.table-card th, .table-card td { padding: 13px 16px; text-align: left; border-bottom: 1px solid #edf0f5; }
+.table-card th { color: #56647d; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.empty-cell, .state-message { padding: 24px; color: #66738a; }
+.state-message.error { color: #b42318; }
+.pagination { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 18px 0; }
+.pagination button { border: 1px solid #c7cfdb; border-radius: 7px; background: #fff; padding: 9px 13px; cursor: pointer; }
+.pagination button:disabled { cursor: not-allowed; opacity: .5; }

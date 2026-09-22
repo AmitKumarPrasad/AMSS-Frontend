@@ -6,6 +6,7 @@ import LoginPage from "./pages/LoginPage";
 import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import ForbiddenPage from "./pages/ForbiddenPage";
+import StudentsPage from "./pages/StudentsPage";
 
 export default function App() {
   return (
@@ -15,7 +16,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/students" element={<HomePage />} />
+            <Route path="/students" element={<StudentsPage />} />
             <Route path="/academics" element={<HomePage />} />
             <Route path="/finance" element={<HomePage />} />
             <Route path="/ai-assistant" element={<HomePage />} />
