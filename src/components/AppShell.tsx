@@ -10,6 +10,7 @@ export default function AppShell() {
   const canManageAcademics = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]);
   const canManageFinance = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.ACCOUNTANT]);
   const canManageAttendance = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]);
+  const canSelfServe = hasAnyRole(roles, [ROLES.PARENT, ROLES.STUDENT]);
 
   return (
     <>
@@ -22,6 +23,7 @@ export default function AppShell() {
           {canManageAcademics && <Link to="/academics">Academics</Link>}
           {canManageAcademics && <Link to="/assessments">Exams & Grades</Link>}
           {canManageFinance && <Link to="/finance">Finance</Link>}
+          {canSelfServe && <Link to="/self-service">My Portal</Link>}
           <Link to="/ai-assistant">AI Assistant</Link>
         </aside>
         <main className="page shell-content"><Outlet /></main>
