@@ -12,6 +12,7 @@ import FinancePage from "./pages/FinancePage";
 import NotificationsDocumentsPage from "./pages/NotificationsDocumentsPage";
 import AiAssistantPage from "./pages/AiAssistantPage";
 import AttendancePage from "./pages/AttendancePage";
+import AssessmentsPage from "./pages/AssessmentsPage";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/attendance" element={<AttendancePage />} />
             <Route path="/academics" element={<AcademicsPage />} />
+            <Route path="/assessments" element={<AssessmentsPage />} />
             <Route path="/finance" element={<FinancePage />} />
             <Route path="/notifications-documents" element={<NotificationsDocumentsPage />} />
             <Route path="/ai-assistant" element={<AiAssistantPage />} />
