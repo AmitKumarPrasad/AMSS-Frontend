@@ -21,7 +21,7 @@ describe("API error normalization coverage", () => {
 
   it("handles request correlation ids", () => {
     const error = new axios.AxiosError("failure");
-    error.response = { status: 500, statusText: "Internal Server Error", headers: {}, config: {} as never, data: {} };\n    error.config = { headers: { "X-Request-ID": "req-123" } } as never;
+    error.config = { headers: { "X-Request-ID": "req-123" } } as never;
     expect(getApiErrorInfo(error)).toMatchObject({ kind: "server", status: 500, requestId: "req-123" });
   });
 });
