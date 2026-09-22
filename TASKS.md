@@ -14,6 +14,7 @@
 - [x] Exams and grades UI
 - [x] Parent/student self-service UI
 - [x] Admin operations dashboard and audit activity
+- [x] API request correlation and timeout hardening
 - [ ] Remaining workflow integration
 
 ## Working Rule
