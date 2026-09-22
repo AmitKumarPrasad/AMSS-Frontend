@@ -19,6 +19,7 @@
 - [x] Normalized API error handling
 - [x] Student workflow error and retry integration
 - [x] Login workflow error integration
+- [x] Attendance workflow error integration
 - [ ] Remaining workflow integration
 
 ## Working Rule
