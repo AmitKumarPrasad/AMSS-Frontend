@@ -8,7 +8,7 @@
 - [x] Academic management UI
 - [x] Finance UI
 - [x] Notifications and documents UI
-- [ ] AI Assistant UI and conversation state
+- [x] AI Assistant UI and conversation state
 - [ ] Frontend integration/regression coverage
 
 ## Working Rule
