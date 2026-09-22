@@ -61,7 +61,7 @@ describe("AI assistant API", () => {
   });
 
   it("sends an assistant question with conversation state and request id", async () => {
-    vi.spyOn(crypto, "randomUUID").mockReturnValue("request-1");
+    vi.spyOn(crypto, "randomUUID").mockReturnValue("123e4567-e89b-12d3-a456-426614174000");
     vi.mocked(apiClient.post).mockResolvedValueOnce({
       data: { answer: "Hello", conversationId: "c1" },
     } as never);
@@ -71,7 +71,7 @@ describe("AI assistant API", () => {
     expect(apiClient.post).toHaveBeenCalledWith(
       "/api/v1/schools/school-1/ai/ask",
       { question: "How many students?", conversationId: "c1" },
-      { headers: { "X-Request-ID": "request-1" } },
+      { headers: { "X-Request-ID": "123e4567-e89b-12d3-a456-426614174000" } },
     );
     expect(result.answer).toBe("Hello");
   });
