@@ -76,3 +76,11 @@
 .attendance-summary span { color: #66738a; font-size: 14px; }
 @media (max-width: 900px) { .attendance-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 800px) { .finance-summary, .finance-grid, .attendance-summary { grid-template-columns: 1fr; } }
+
+.assessment-controls { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 18px; }
+.assessment-controls label, .assessment-form { display: grid; gap: 7px; }
+.assessment-controls select, .assessment-form input { padding: 10px 12px; border: 1px solid #b9c2d0; border-radius: 7px; background: #fff; color: #172033; }
+.assessment-form { grid-template-columns: 2fr 1fr 1fr auto; align-items: end; margin-bottom: 24px; }
+.assessment-actions { display: flex; justify-content: flex-end; padding: 16px; }
+.grade-input { width: 120px; box-sizing: border-box; padding: 8px 10px; border: 1px solid #b9c2d0; border-radius: 7px; }
+@media (max-width: 800px) { .assessment-controls, .assessment-form { grid-template-columns: 1fr; } }
