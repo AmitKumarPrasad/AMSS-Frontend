@@ -2,6 +2,7 @@ import { useState } from "react";
 import type { FormEvent } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
+import { getApiErrorInfo } from "../api/errorHandling";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -25,8 +26,8 @@ export default function LoginPage() {
     try {
       await login({ username: username.trim(), password });
       navigate(from, { replace: true });
-    } catch {
-      setError("Login failed. Check your credentials and try again.");
+    } catch (requestError) {
+      setError(getApiErrorInfo(requestError).message);
     } finally {
       setSubmitting(false);
     }
