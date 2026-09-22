@@ -13,6 +13,7 @@ import NotificationsDocumentsPage from "./pages/NotificationsDocumentsPage";
 import AiAssistantPage from "./pages/AiAssistantPage";
 import AttendancePage from "./pages/AttendancePage";
 import AssessmentsPage from "./pages/AssessmentsPage";
+import SelfServicePage from "./pages/SelfServicePage";
 
 export default function App() {
   return (
@@ -29,6 +30,9 @@ export default function App() {
             <Route path="/finance" element={<FinancePage />} />
             <Route path="/notifications-documents" element={<NotificationsDocumentsPage />} />
             <Route path="/ai-assistant" element={<AiAssistantPage />} />
+            <Route element={<ProtectedRoute allowedRoles={[ROLES.PARENT, ROLES.STUDENT]} />}>
+              <Route path="/self-service" element={<SelfServicePage />} />
+            </Route>
           </Route>
         </Route>
         <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]} />}>
