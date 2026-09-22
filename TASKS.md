@@ -23,6 +23,7 @@
 - [x] Assessments workflow error integration
 - [x] AI Assistant error workflow coverage
 - [x] Self-service error workflow coverage
+- [x] Admin operations error workflow coverage
 - [ ] Remaining workflow integration
 
 ## Working Rule
