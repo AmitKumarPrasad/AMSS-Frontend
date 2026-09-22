@@ -14,6 +14,7 @@ import AiAssistantPage from "./pages/AiAssistantPage";
 import AttendancePage from "./pages/AttendancePage";
 import AssessmentsPage from "./pages/AssessmentsPage";
 import SelfServicePage from "./pages/SelfServicePage";
+import AdminOperationsPage from "./pages/AdminOperationsPage";
 
 export default function App() {
   return (
@@ -32,6 +33,9 @@ export default function App() {
             <Route path="/ai-assistant" element={<AiAssistantPage />} />
             <Route element={<ProtectedRoute allowedRoles={[ROLES.PARENT, ROLES.STUDENT]} />}>
               <Route path="/self-service" element={<SelfServicePage />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]} />}>
+              <Route path="/admin/operations" element={<AdminOperationsPage />} />
             </Route>
           </Route>
         </Route>
