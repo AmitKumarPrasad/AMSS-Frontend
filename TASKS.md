@@ -24,6 +24,7 @@
 - [x] AI Assistant error workflow coverage
 - [x] Self-service error workflow coverage
 - [x] Admin operations error workflow coverage
+- [x] Communication workflow error coverage
 - [ ] Remaining workflow integration
 
 ## Working Rule
