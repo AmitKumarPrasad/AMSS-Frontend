@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { getStudents, type Student } from "../api/students";
+import { getApiErrorInfo } from "../api/errorHandling";
 import {
   getDailySummary,
   markBulkAttendance,
@@ -48,8 +49,8 @@ export default function AttendancePage() {
       setStudents(studentPage.content);
       setSummary(dailySummary);
       setStatuses(Object.fromEntries(studentPage.content.map((student) => [String(student.id), "PRESENT"])));
-    } catch {
-      setError("Unable to load attendance data.");
+    } catch (requestError) {
+      setError(getApiErrorInfo(requestError).message);
     } finally {
       setLoading(false);
     }
@@ -81,8 +82,8 @@ export default function AttendancePage() {
       const dailySummary = await getDailySummary(schoolId, date);
       setSummary(dailySummary);
       setSaved(true);
-    } catch {
-      setError("Unable to save attendance. Please review the entries and try again.");
+    } catch (requestError) {
+      setError(getApiErrorInfo(requestError).message);
     } finally {
       setSaving(false);
     }
