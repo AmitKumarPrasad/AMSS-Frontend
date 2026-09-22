@@ -24,6 +24,7 @@ export default function AppShell() {
           {canManageAcademics && <Link to="/assessments">Exams & Grades</Link>}
           {canManageFinance && <Link to="/finance">Finance</Link>}
           {canSelfServe && <Link to="/self-service">My Portal</Link>}
+          {canManageSchool && <Link to="/admin/operations">Operations</Link>}
           <Link to="/ai-assistant">AI Assistant</Link>
         </aside>
         <main className="page shell-content"><Outlet /></main>
