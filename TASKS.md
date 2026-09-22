@@ -25,6 +25,7 @@
 - [x] Self-service error workflow coverage
 - [x] Admin operations error workflow coverage
 - [x] Communication workflow error coverage
+- [x] Complete API error normalization coverage
 - [ ] Remaining workflow integration
 
 ## Working Rule
