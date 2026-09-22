@@ -12,3 +12,21 @@
 .pagination { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 18px 0; }
 .pagination button { border: 1px solid #c7cfdb; border-radius: 7px; background: #fff; padding: 9px 13px; cursor: pointer; }
 .pagination button:disabled { cursor: not-allowed; opacity: .5; }
+
+.academic-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.academic-summary article { display: grid; gap: 5px; background: #fff; border: 1px solid #e8ecf3; border-radius: 14px; padding: 18px; }
+.academic-summary strong { font-size: 28px; }
+.academic-summary span { color: #66738a; font-size: 14px; }
+.academic-tabs { display: flex; gap: 8px; border-bottom: 1px solid #e8ecf3; margin-bottom: 20px; }
+.academic-tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; color: #56647d; padding: 11px 14px; cursor: pointer; font-weight: 600; }
+.academic-tabs button.active { border-bottom-color: #1f5eff; color: #172033; }
+.academic-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
+.academic-card { background: #fff; border: 1px solid #e8ecf3; border-radius: 14px; padding: 22px; }
+.academic-card h2 { margin: 8px 0 18px; }
+.academic-card dl { display: grid; gap: 12px; margin: 0 0 20px; }
+.academic-card dl div { display: flex; justify-content: space-between; gap: 16px; border-bottom: 1px solid #edf0f5; padding-bottom: 9px; }
+.academic-card dt { color: #66738a; }
+.academic-card dd { margin: 0; font-weight: 600; }
+.secondary-button { border: 1px solid #c7cfdb; border-radius: 7px; background: #fff; color: #172033; padding: 8px 12px; cursor: pointer; }
+.academic-note { margin-top: 16px; font-size: 13px; }
+@media (max-width: 800px) { .academic-summary, .academic-grid { grid-template-columns: 1fr; } .academic-tabs { overflow-x: auto; } }
