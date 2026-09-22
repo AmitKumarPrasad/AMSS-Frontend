@@ -16,7 +16,7 @@ function today() {
 }
 
 function studentName(student: Student) {
-  return student.name ?? [student.firstName, student.lastName].filter(Boolean).join(" ") || String(student.id);
+  return student.name ?? ([student.firstName, student.lastName].filter(Boolean).join(" ") || String(student.id));
 }
 
 export default function AttendancePage() {
