@@ -7,8 +7,10 @@
 .table-card table { width: 100%; border-collapse: collapse; min-width: 760px; }
 .table-card th, .table-card td { padding: 13px 16px; text-align: left; border-bottom: 1px solid #edf0f5; }
 .table-card th { color: #56647d; font-size: 12px; text-transform: uppercase; letter-spacing: .05em; }
+.table-card select { padding: 8px 10px; border: 1px solid #b9c2d0; border-radius: 7px; background: #fff; }
 .empty-cell, .state-message { padding: 24px; color: #66738a; }
 .state-message.error { color: #b42318; }
+.state-message.success { color: #087443; }
 .pagination { display: flex; align-items: center; justify-content: flex-end; gap: 12px; padding: 18px 0; }
 .pagination button { border: 1px solid #c7cfdb; border-radius: 7px; background: #fff; padding: 9px 13px; cursor: pointer; }
 .pagination button:disabled { cursor: not-allowed; opacity: .5; }
@@ -65,3 +67,12 @@
 .ai-composer textarea { width: 100%; box-sizing: border-box; resize: vertical; min-height: 72px; padding: 11px; border: 1px solid #b9c2d0; border-radius: 8px; font: inherit; }
 .ai-composer div { display: flex; align-items: center; justify-content: space-between; gap: 12px; color: #66738a; font-size: 12px; }
 @media (max-width: 800px) { .ai-layout { grid-template-columns: 1fr; } .ai-sidebar { min-height: 180px; } .chat-message { max-width: 92%; } }
+
+.attendance-toolbar { align-items: end; }
+.attendance-save { margin-bottom: 0; }
+.attendance-summary { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 16px; margin-bottom: 24px; }
+.attendance-summary article { display: grid; gap: 5px; background: #fff; border: 1px solid #e8ecf3; border-radius: 14px; padding: 18px; }
+.attendance-summary strong { font-size: 28px; }
+.attendance-summary span { color: #66738a; font-size: 14px; }
+@media (max-width: 900px) { .attendance-summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 800px) { .finance-summary, .finance-grid, .attendance-summary { grid-template-columns: 1fr; } }
