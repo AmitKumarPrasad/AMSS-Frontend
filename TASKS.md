@@ -16,6 +16,7 @@
 - [x] Admin operations dashboard and audit activity
 - [x] API request correlation and timeout hardening
 - [x] Authentication workflow integration through shared API client
+- [x] Normalized API error handling
 - [ ] Remaining workflow integration
 
 ## Working Rule
