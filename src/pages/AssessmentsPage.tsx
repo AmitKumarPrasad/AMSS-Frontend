@@ -1,5 +1,6 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { getStudents, type Student } from "../api/students";
+import { getApiErrorInfo } from "../api/errorHandling";
 import { getSchoolIdFromToken } from "../api/aiAssistant";
 import { useAuthStore } from "../auth/authStore";
 import { createAssessment, listAcademicYears, listAssessments, listClasses, listResults, saveResults, type AcademicYear, type Assessment, type Result, type SchoolClass } from "../api/assessments";
@@ -32,7 +33,7 @@ export default function AssessmentsPage() {
     void listAcademicYears(schoolId).then((data) => {
       setYears(data);
       if (data[0]) setYearId(data[0].id);
-    }).catch(() => setError("Unable to load academic years.")).finally(() => setLoading(false));
+    }).catch((requestError) => setError(getApiErrorInfo(requestError).message)).finally(() => setLoading(false));
   }, [schoolId]);
 
   useEffect(() => {
@@ -43,19 +44,19 @@ export default function AssessmentsPage() {
         setClasses(classData); setAssessments(assessmentData);
         if (classData[0]) setClassId(classData[0].id);
         if (assessmentData[0]) setAssessmentId(assessmentData[0].id);
-      }).catch(() => setError("Unable to load assessment setup."));
+      }).catch((requestError) => setError(getApiErrorInfo(requestError).message));
   }, [schoolId, yearId]);
 
   useEffect(() => {
     if (!schoolId || !classId) return;
     void getStudents({ page: 0, size: 100, status: "ACTIVE" }).then((page) => setStudents(page.content))
-      .catch(() => setError("Unable to load students."));
+      .catch((requestError) => setError(getApiErrorInfo(requestError).message));
   }, [schoolId, classId]);
 
   useEffect(() => {
     if (!schoolId || !assessmentId) return;
     void listResults(schoolId, assessmentId).then((items) => setResults(Object.fromEntries(items.map((item) => [item.studentId, item]))))
-      .catch(() => setError("Unable to load grades."));
+      .catch((requestError) => setError(getApiErrorInfo(requestError).message));
   }, [schoolId, assessmentId]);
 
   async function submitAssessment(event: FormEvent) {
@@ -68,7 +69,7 @@ export default function AssessmentsPage() {
       setAssessmentId(created.id);
       setName("");
       setMessage("Assessment created successfully.");
-    } catch { setError("Unable to create assessment."); }
+    } catch (requestError) { setError(getApiErrorInfo(requestError).message); }
   }
 
   function updateResult(studentId: string, field: "marks" | "grade", value: string) {
@@ -89,7 +90,7 @@ export default function AssessmentsPage() {
         grade: results[String(student.id)]?.grade || undefined,
       })));
       setMessage("Grades saved successfully.");
-    } catch { setError("Unable to save grades."); } finally { setSaving(false); }
+    } catch (requestError) { setError(getApiErrorInfo(requestError).message); } finally { setSaving(false); }
   }
 
   if (loading) return <section className="page-section"><p className="state-message">Loading assessments…</p></section>;
