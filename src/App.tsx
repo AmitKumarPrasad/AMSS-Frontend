@@ -7,6 +7,7 @@ import { HomePage } from "./pages/HomePage";
 import { NotFoundPage } from "./pages/NotFoundPage";
 import ForbiddenPage from "./pages/ForbiddenPage";
 import StudentsPage from "./pages/StudentsPage";
+import AcademicsPage from "./pages/AcademicsPage";
 
 export default function App() {
   return (
@@ -17,7 +18,7 @@ export default function App() {
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/students" element={<StudentsPage />} />
-            <Route path="/academics" element={<HomePage />} />
+            <Route path="/academics" element={<AcademicsPage />} />
             <Route path="/finance" element={<HomePage />} />
             <Route path="/ai-assistant" element={<HomePage />} />
           </Route>
