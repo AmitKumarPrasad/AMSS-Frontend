@@ -10,6 +10,7 @@ export default function AppShell() {
   const canManageSchool = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]);
   const canManageAcademics = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]);
   const canManageFinance = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.ACCOUNTANT]);
+  const canManageAttendance = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]);
 
   return (
     <>
@@ -24,6 +25,7 @@ export default function AppShell() {
         <aside className="sidebar" aria-label="Main navigation">
           <Link to="/">Dashboard</Link>
           {canManageSchool && <Link to="/students">Students</Link>}
+          {canManageAttendance && <Link to="/attendance">Attendance</Link>}
           {canManageAcademics && <Link to="/academics">Academics</Link>}
           {canManageFinance && <Link to="/finance">Finance</Link>}
           <Link to="/ai-assistant">AI Assistant</Link>
