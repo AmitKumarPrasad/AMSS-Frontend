@@ -9,6 +9,7 @@ import ForbiddenPage from "./pages/ForbiddenPage";
 import StudentsPage from "./pages/StudentsPage";
 import AcademicsPage from "./pages/AcademicsPage";
 import FinancePage from "./pages/FinancePage";
+import NotificationsDocumentsPage from "./pages/NotificationsDocumentsPage";
 
 export default function App() {
   return (
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/students" element={<StudentsPage />} />
             <Route path="/academics" element={<AcademicsPage />} />
             <Route path="/finance" element={<FinancePage />} />
+            <Route path="/notifications-documents" element={<NotificationsDocumentsPage />} />
             <Route path="/ai-assistant" element={<HomePage />} />
           </Route>
         </Route>
