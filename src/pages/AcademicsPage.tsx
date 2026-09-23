@@ -1,18 +1,10 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuthStore } from "../auth/authStore";
+import { getSchoolIdFromToken } from "../api/aiAssistant";
+import { getApiErrorInfo } from "../api/errorHandling";
+import { listAcademicYears, listClasses, listSubjects, type AcademicYear, type SchoolClass, type Subject } from "../api/academics";
 
 type AcademicTab = "classes" | "subjects" | "timetable";
-
-const classes = [
-  { name: "Class 10", sections: 2, students: 84, coordinator: "Academic Team" },
-  { name: "Class 9", sections: 2, students: 78, coordinator: "Academic Team" },
-  { name: "Class 8", sections: 2, students: 72, coordinator: "Academic Team" },
-];
-
-const subjects = [
-  { name: "Mathematics", code: "MATH", classes: "8, 9, 10", teacher: "Assigned by school" },
-  { name: "Science", code: "SCI", classes: "8, 9, 10", teacher: "Assigned by school" },
-  { name: "English", code: "ENG", classes: "8, 9, 10", teacher: "Assigned by school" },
-];
 
 const timetable = [
   { day: "Monday", periods: "Mathematics · Science · English · Computer" },
@@ -23,7 +15,66 @@ const timetable = [
 ];
 
 export default function AcademicsPage() {
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const schoolId = useMemo(() => getSchoolIdFromToken(accessToken), [accessToken]);
   const [tab, setTab] = useState<AcademicTab>("classes");
+  const [academicYears, setAcademicYears] = useState<AcademicYear[]>([]);
+  const [selectedYearId, setSelectedYearId] = useState("");
+  const [classes, setClasses] = useState<SchoolClass[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [classesLoading, setClassesLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!schoolId) {
+      setLoading(false);
+      setError("Your session does not contain a school identifier.");
+      return;
+    }
+    let active = true;
+    setLoading(true);
+    setError(null);
+    Promise.all([listAcademicYears(schoolId), listSubjects(schoolId)])
+      .then(([yearPage, subjectPage]) => {
+        if (!active) return;
+        const years = yearPage.content ?? [];
+        setAcademicYears(years);
+        setSubjects(subjectPage.content ?? []);
+        setSelectedYearId((current) => current || years.find((year) => year.active)?.id || years[0]?.id || "");
+      })
+      .catch((err) => {
+        if (active) setError(getApiErrorInfo(err).message);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => { active = false; };
+  }, [schoolId]);
+
+  useEffect(() => {
+    if (!schoolId || !selectedYearId) {
+      setClasses([]);
+      return;
+    }
+    let active = true;
+    setClassesLoading(true);
+    listClasses(schoolId, selectedYearId)
+      .then((page) => {
+        if (active) setClasses(page.content ?? []);
+      })
+      .catch((err) => {
+        if (active) setError(getApiErrorInfo(err).message);
+      })
+      .finally(() => {
+        if (active) setClassesLoading(false);
+      });
+    return () => { active = false; };
+  }, [schoolId, selectedYearId]);
+
+  if (loading) {
+    return <section className="page-section"><p className="state-message">Loading academics…</p></section>;
+  }
 
   return (
     <section className="page-section" aria-labelledby="academics-title">
@@ -31,11 +82,11 @@ export default function AcademicsPage() {
         <div>
           <p className="eyebrow">AMSS · Academic Management</p>
           <h1 id="academics-title">Academics</h1>
-          <p className="subtitle">
-            Organize classes, subjects and weekly teaching schedules from one workspace.
-          </p>
+          <p className="subtitle">Organize classes, subjects and weekly teaching schedules from one workspace.</p>
         </div>
       </div>
+
+      {error && <p className="state-message error" role="alert">{error}</p>}
 
       <div className="academic-summary">
         <article><strong>{classes.length}</strong><span>Classes</span></article>
@@ -49,20 +100,24 @@ export default function AcademicsPage() {
         <button type="button" className={tab === "timetable" ? "active" : ""} onClick={() => setTab("timetable")}>Timetable</button>
       </div>
 
+      {tab !== "timetable" && (
+        <div className="filter-bar">
+          <label>
+            Academic year
+            <select value={selectedYearId} onChange={(event) => setSelectedYearId(event.target.value)}>
+              <option value="">Select academic year</option>
+              {academicYears.map((year) => <option key={year.id} value={year.id}>{year.name}{year.active ? " (Active)" : ""}</option>)}
+            </select>
+          </label>
+        </div>
+      )}
+
       {tab === "classes" && (
         <div className="academic-grid">
-          {classes.map((item) => (
-            <article className="academic-card" key={item.name}>
-              <div>
-                <p className="eyebrow">Class</p>
-                <h2>{item.name}</h2>
-              </div>
-              <dl>
-                <div><dt>Sections</dt><dd>{item.sections}</dd></div>
-                <div><dt>Students</dt><dd>{item.students}</dd></div>
-                <div><dt>Coordinator</dt><dd>{item.coordinator}</dd></div>
-              </dl>
-              <button type="button" className="secondary-button">Manage sections</button>
+          {classesLoading ? <p className="state-message">Loading classes…</p> : classes.length === 0 ? <p className="state-message">No classes are available for this academic year.</p> : classes.map((item) => (
+            <article className="academic-card" key={item.id}>
+              <div><p className="eyebrow">Class</p><h2>{item.name}</h2></div>
+              <dl><div><dt>Grade</dt><dd>{item.gradeLevel}</dd></div><div><dt>Status</dt><dd>{item.active ? "Active" : "Inactive"}</dd></div></dl>
             </article>
           ))}
         </div>
@@ -70,36 +125,19 @@ export default function AcademicsPage() {
 
       {tab === "subjects" && (
         <div className="table-card">
-          <table>
-            <thead><tr><th>Subject</th><th>Code</th><th>Classes</th><th>Teacher</th><th>Action</th></tr></thead>
-            <tbody>
-              {subjects.map((item) => (
-                <tr key={item.code}>
-                  <td>{item.name}</td><td>{item.code}</td><td>{item.classes}</td><td>{item.teacher}</td>
-                  <td><button type="button" className="secondary-button">View</button></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <table><thead><tr><th>Subject</th><th>Code</th></tr></thead>
+          <tbody>{subjects.map((item) => <tr key={item.id}><td>{item.name}</td><td>{item.code}</td></tr>)}</tbody></table>
         </div>
       )}
 
       {tab === "timetable" && (
         <div className="table-card">
-          <table>
-            <thead><tr><th>Day</th><th>Periods</th></tr></thead>
-            <tbody>
-              {timetable.map((item) => (
-                <tr key={item.day}><td>{item.day}</td><td>{item.periods}</td></tr>
-              ))}
-            </tbody>
-          </table>
+          <table><thead><tr><th>Day</th><th>Periods</th></tr></thead>
+          <tbody>{timetable.map((item) => <tr key={item.day}><td>{item.day}</td><td>{item.periods}</td></tr>)}</tbody></table>
         </div>
       )}
 
-      <p className="state-message academic-note">
-        Academic API wiring will be connected after the backend academic contract is finalized; this screen establishes the production UI structure without inventing an API contract.
-      </p>
+      <p className="state-message academic-note">Classes, academic years and subjects are now loaded from the verified backend contracts. Timetable remains presentation-only until its read contract is available.</p>
     </section>
   );
 }
