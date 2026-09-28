@@ -52,7 +52,7 @@ export default function FinancePage() {
       })
       .catch((err) => setError(getApiErrorInfo(err).message))
       .finally(() => setLoading(false));
-  };
+  }, [schoolId, status]);
 
   useEffect(() => {
     if (!schoolId) {
