@@ -27,6 +27,8 @@
 - [x] Communication workflow error coverage
 - [x] Complete API error normalization coverage
 - [x] Finance workflow integration
+- [x] Finance workflow integration
+- [x] Notifications and documents backend integration
 - [ ] Remaining workflow integration
 
 ## Working Rule
