@@ -22,10 +22,11 @@
 - [x] Attendance workflow error integration
 - [x] Assessments workflow error integration
 - [x] AI Assistant error workflow coverage
-- [x] Self-service error workflow coverage
-- [x] Admin operations error workflow coverage
+- [x] Self-service workflow error coverage
+- [x] Admin operations workflow error coverage
 - [x] Communication workflow error coverage
 - [x] Complete API error normalization coverage
+- [x] Finance workflow integration
 - [ ] Remaining workflow integration
 
 ## Working Rule
