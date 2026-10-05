@@ -1,52 +1,32 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useAuthStore } from "../auth/authStore";
+import { getSchoolIdFromToken } from "../api/aiAssistant";
+import { getApiErrorInfo } from "../api/errorHandling";
+import { downloadDocument, listDocuments, listNotifications, markNotificationRead, uploadDocument, type DocumentView, type NotificationView } from "../api/communication";
 
-type CommunicationTab = "notifications" | "documents";
-
-const notifications = [
-  { title: "Fee reminder", audience: "Parents", channel: "In-app", status: "Scheduled" },
-  { title: "Exam timetable published", audience: "Students & Parents", channel: "In-app", status: "Sent" },
-  { title: "Staff meeting", audience: "Teachers", channel: "Email", status: "Draft" },
-];
-
-const documents = [
-  { name: "Academic Calendar", type: "PDF", owner: "School Admin", status: "Published" },
-  { name: "Fee Structure", type: "PDF", owner: "Accounts", status: "Published" },
-  { name: "Student Handbook", type: "PDF", owner: "School Admin", status: "Draft" },
-];
-
-export default function NotificationsDocumentsPage() {
-  const [tab, setTab] = useState<CommunicationTab>("notifications");
-
-  return (
-    <section className="page-section" aria-labelledby="communication-title">
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">AMSS · Communication</p>
-          <h1 id="communication-title">Notifications & Documents</h1>
-          <p className="subtitle">Manage school communications and shared documents in one workspace.</p>
-        </div>
-      </div>
-
-      <div className="academic-tabs" role="tablist" aria-label="Communication sections">
-        <button type="button" className={tab === "notifications" ? "active" : ""} onClick={() => setTab("notifications")}>Notifications</button>
-        <button type="button" className={tab === "documents" ? "active" : ""} onClick={() => setTab("documents")}>Documents</button>
-      </div>
-
-      {tab === "notifications" && (
-        <div className="table-card">
-          <table><thead><tr><th>Notification</th><th>Audience</th><th>Channel</th><th>Status</th></tr></thead>
-          <tbody>{notifications.map((item) => <tr key={item.title}><td>{item.title}</td><td>{item.audience}</td><td>{item.channel}</td><td><span className="badge">{item.status}</span></td></tr>)}</tbody></table>
-        </div>
-      )}
-
-      {tab === "documents" && (
-        <div className="table-card">
-          <table><thead><tr><th>Document</th><th>Type</th><th>Owner</th><th>Status</th></tr></thead>
-          <tbody>{documents.map((item) => <tr key={item.name}><td>{item.name}</td><td>{item.type}</td><td>{item.owner}</td><td><span className="badge">{item.status}</span></td></tr>)}</tbody></table>
-        </div>
-      )}
-
-      <p className="state-message academic-note">Notification and document API wiring will follow the finalized backend contracts; the UI intentionally avoids assuming undocumented endpoints or storage behavior.</p>
-    </section>
-  );
+type CommunicationTab="notifications"|"documents";
+export default function NotificationsDocumentsPage(){
+ const accessToken=useAuthStore(s=>s.accessToken);
+ const schoolId=useMemo(()=>getSchoolIdFromToken(accessToken),[accessToken]);
+ const [tab,setTab]=useState<CommunicationTab>("notifications");
+ const [notifications,setNotifications]=useState<NotificationView[]>([]);
+ const [documents,setDocuments]=useState<DocumentView[]>([]);
+ const [error,setError]=useState<string|null>(null);
+ const [loading,setLoading]=useState(true);
+ const [file,setFile]=useState<File|null>(null);
+ const [title,setTitle]=useState("");
+ const [saving,setSaving]=useState(false);
+ const load=async()=>{if(!schoolId)return;setLoading(true);setError(null);try{const [n,d]=await Promise.all([listNotifications(schoolId),listDocuments(schoolId,true)]);setNotifications(n);setDocuments(d);}catch(e){setError(getApiErrorInfo(e).message);}finally{setLoading(false);}};
+ useEffect(()=>{if(!schoolId){setLoading(false);setError("Your session does not contain a school identifier.");return;}void load();},[schoolId]);
+ const read=async(id:string)=>{if(!schoolId)return;try{const updated=await markNotificationRead(schoolId,id);setNotifications(items=>items.map(x=>x.id===id?updated:x));}catch(e){setError(getApiErrorInfo(e).message);}};
+ const upload=async(e:React.FormEvent)=>{e.preventDefault();if(!schoolId||!file)return;setSaving(true);setError(null);try{await uploadDocument(schoolId,file,title);setFile(null);setTitle("");setDocuments(await listDocuments(schoolId,true));}catch(err){setError(getApiErrorInfo(err).message);}finally{setSaving(false);}};
+ const download=async(doc:DocumentView)=>{if(!schoolId)return;try{const blob=await downloadDocument(schoolId,doc.id);const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download=doc.fileName;a.click();URL.revokeObjectURL(url);}catch(e){setError(getApiErrorInfo(e).message);}};
+ return <section className="page-section" aria-labelledby="communication-title">
+  <div className="page-heading"><div><p className="eyebrow">AMSS · Communication</p><h1 id="communication-title">Notifications & Documents</h1><p className="subtitle">Live school communications and shared documents.</p></div></div>
+  {error&&<p className="state-message error" role="alert">{error}</p>}
+  <div className="academic-tabs" role="tablist"><button type="button" className={tab==="notifications"?"active":""} onClick={()=>setTab("notifications")}>Notifications</button><button type="button" className={tab==="documents"?"active":""} onClick={()=>setTab("documents")}>Documents</button></div>
+  {loading?<p className="state-message">Loading communication data…</p>:tab==="notifications"?<div className="table-card"><table><thead><tr><th>Subject</th><th>Channel</th><th>Status</th><th>Created</th><th>Action</th></tr></thead><tbody>{notifications.map(n=><tr key={n.id}><td>{n.subject||n.body}</td><td>{n.channel}</td><td><span className="badge">{n.readAt?"READ":n.status}</span></td><td>{new Date(n.createdAt).toLocaleString()}</td><td>{!n.readAt&&<button type="button" onClick={()=>void read(n.id)}>Mark read</button>}</td></tr>)}{notifications.length===0&&<tr><td colSpan={5}>No notifications.</td></tr>}</tbody></table></div>:<>
+   <form className="filter-bar" onSubmit={upload}><label>Title<input required value={title} onChange={e=>setTitle(e.target.value)}/></label><label>File<input required type="file" onChange={e=>setFile(e.target.files?.[0]??null)}/></label><button className="primary-button" disabled={saving||!file} type="submit">{saving?"Uploading…":"Upload document"}</button></form>
+   <div className="table-card"><table><thead><tr><th>Document</th><th>Type</th><th>Audience</th><th>Status</th><th>Action</th></tr></thead><tbody>{documents.map(d=><tr key={d.id}><td>{d.title}</td><td>{d.contentType}</td><td>{d.audienceRole||"All roles"}</td><td><span className="badge">{d.status}</span></td><td><button type="button" onClick={()=>void download(d)}>Download</button></td></tr>)}{documents.length===0&&<tr><td colSpan={5}>No published documents.</td></tr>}</tbody></table></div></>}
+ </section>;
 }
