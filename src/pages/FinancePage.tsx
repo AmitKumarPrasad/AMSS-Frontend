@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "../auth/authStore";
 import { getSchoolIdFromToken } from "../api/aiAssistant";
 import { getApiErrorInfo } from "../api/errorHandling";
@@ -36,7 +36,7 @@ export default function FinancePage() {
   const [paymentAmount, setPaymentAmount] = useState("");
   const [saving, setSaving] = useState(false);
 
-  const refreshInvoices = () => {
+  const refreshInvoices = useCallback(() => {
     if (!schoolId) return;
     setLoading(true);
     setError(null);
@@ -61,7 +61,7 @@ export default function FinancePage() {
       return;
     }
     refreshInvoices();
-  }, [schoolId, status]);
+  }, [schoolId, refreshInvoices]);
 
   useEffect(() => {
     if (!schoolId || !selectedInvoiceId) {
