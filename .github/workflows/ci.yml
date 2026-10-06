@@ -24,3 +24,7 @@ jobs:
         run: npm run test
       - name: Build
         run: npm run build
+      - name: Build runnable frontend container
+        run: docker build --build-arg VITE_API_BASE_URL=http://localhost:8080 -t amss-frontend:ci .
+      - name: Validate frontend compose
+        run: docker compose config
