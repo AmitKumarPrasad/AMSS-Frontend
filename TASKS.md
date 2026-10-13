@@ -30,7 +30,7 @@
 - [x] Finance workflow integration
 - [x] Notifications and documents backend integration
 - [x] Containerized runnable frontend
-- [ ] End-to-end frontend/backend workflow verification
+- [x] End-to-end frontend/backend workflow verification
 
 ## Working Rule
 Implementation → PR → CI → fix if red → GREEN → merge → next feature.
