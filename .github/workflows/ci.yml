@@ -28,3 +28,20 @@ jobs:
         run: docker build --build-arg VITE_API_BASE_URL=http://localhost:8080 -t amss-frontend:ci .
       - name: Validate frontend compose
         run: docker compose config
+      - name: Smoke test production frontend container
+        run: |
+          trap 'docker rm -f amss-frontend-ci >/dev/null 2>&1 || true' EXIT
+          docker run -d --name amss-frontend-ci -p 5173:80 amss-frontend:ci
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:5173/ > /tmp/frontend-root.html; then
+              break
+            fi
+            sleep 1
+          done
+          curl --fail --silent http://127.0.0.1:5173/ > /tmp/frontend-root.html
+          grep -F '<div id="root"></div>' /tmp/frontend-root.html >/dev/null || { echo "Frontend root mount missing"; cat /tmp/frontend-root.html; exit 1; }
+          curl --fail --silent http://127.0.0.1:5173/login > /tmp/frontend-login.html
+          curl --fail --silent http://127.0.0.1:5173/students > /tmp/frontend-students.html
+          cmp -s /tmp/frontend-root.html /tmp/frontend-login.html || { echo "SPA fallback failed for /login"; exit 1; }
+          cmp -s /tmp/frontend-root.html /tmp/frontend-students.html || { echo "SPA fallback failed for /students"; exit 1; }
+          echo "Production frontend container and SPA routing validated."
