@@ -1,4 +1,5 @@
 import { apiClient } from "./client";
+import type { AuthUser } from "../auth/jwt";
 
 export interface LoginRequest {
   username: string;
@@ -10,11 +11,7 @@ export interface LoginResponse {
   tokenType?: string;
   expiresIn?: number;
   refreshToken?: string;
-  user?: {
-    id?: string;
-    username?: string;
-    roles?: string[];
-  };
+  user?: AuthUser;
 }
 
 export async function login(request: LoginRequest): Promise<LoginResponse> {
