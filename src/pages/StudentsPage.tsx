@@ -51,7 +51,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
-      {admin && schoolId && <OperationForm title="Add Student / नया विद्यार्थी" submitLabel="विद्यार्थी जोड़ें" fields={[{name:"admissionNumber",label:"प्रवेश क्रमांक",maxLength:50},{name:"firstName",label:"पहला नाम",maxLength:100},{name:"lastName",label:"उपनाम (वैकल्पिक)",required:false,maxLength:100},{name:"dateOfBirth",label:"जन्मतिथि (वैकल्पिक)",type:"date",required:false,max:new Date().toISOString().slice(0,10)}]} onSubmit={async v=>{await apiClient.post(root,{...v,dateOfBirth:v.dateOfBirth||null});await refresh();}}/>}
+      {admin && schoolId && <OperationForm title="Add Student" submitLabel="Add student" fields={[{name:"admissionNumber",label:"Admission number",maxLength:50},{name:"firstName",label:"First name",maxLength:100},{name:"lastName",label:"Last name",required:false,maxLength:100},{name:"dateOfBirth",label:"Date of birth",type:"date",required:false,max:new Date().toISOString().slice(0,10)}]} onSubmit={async v=>{await apiClient.post(root,{...v,dateOfBirth:v.dateOfBirth||null});await refresh();}}/>}
       <div className="toolbar">
         <label>
           Search

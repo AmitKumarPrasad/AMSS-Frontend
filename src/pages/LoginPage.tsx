@@ -26,7 +26,7 @@ export default function LoginPage() {
       navigate(from, { replace: true });
     } catch (requestError) {
       const info = getApiErrorInfo(requestError);
-      setError(info.status === 401 ? "यूज़र नाम या पासवर्ड सही नहीं है, या खाता बंद है। अपना login username जाँचें या स्कूल एडमिन से संपर्क करें।" : info.message);
+      setError(info.status === 401 ? "The username or password is incorrect, or the account is inactive. Check your login username or contact your school administrator." : info.message);
     } finally {
       setSubmitting(false);
     }
@@ -40,12 +40,12 @@ export default function LoginPage() {
         <h1 id="login-title">Welcome back</h1>
         <p className="auth-copy">Sign in to manage students, academics, attendance, finance and AI-assisted operations.</p>
         <form onSubmit={handleSubmit}>
-          <label>Username / यूज़र नाम<input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" placeholder="Enter username" required /></label>
-          <label>Password / पासवर्ड<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="Enter password" required /></label>
+          <label>Username<input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" placeholder="Enter username" required /></label>
+          <label>Password<input type="password" value={password} onChange={(event) => setPassword(event.target.value)} autoComplete="current-password" placeholder="Enter password" required /></label>
           {error && <p className="form-error" role="alert">{error}</p>}
-          <button type="submit" className="primary-button auth-submit" disabled={submitting}>{submitting ? "Signing in..." : "Sign in / लॉगिन करें"}</button>
+          <button type="submit" className="primary-button auth-submit" disabled={submitting}>{submitting ? "Signing in..." : "Sign in"}</button>
         </form>
-        <div className="auth-note" lang="hi"><strong>नई यूज़र ID चाहिए?</strong><p>अपने स्कूल एडमिन से खाता बनवाएँ। एडमिन लॉगिन के बाद School Setup → Create login account से नई ID बना सकता है।</p><p>पहली बार स्कूल शुरू करने के लिए मौजूदा setup-admin ID से लॉगिन करें और School Setup खोलें।</p></div>
+        <div className="auth-note"><strong>Need a new login account?</strong><p>Ask your school administrator to create it. Administrators can sign in and use School Setup → Create login account.</p><p>Starting a school for the first time? Sign in with the existing setup administrator account, then open School Setup.</p></div>
       </section>
       <aside className="auth-visual" aria-hidden="true"><div><p className="eyebrow">EduSphere AI</p><h2>One workspace for the entire school.</h2><p>Secure, role-aware school operations with intelligent assistance built in.</p></div></aside>
     </main>

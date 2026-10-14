@@ -37,11 +37,11 @@ export function HomePage() {
         <div className="status-pill"><span /> Signed in</div>
       </div>
 
-      <div className="staff-shortcuts" lang="hi">
-        <h2>यहाँ से शुरू करें</h2>
+      <div className="staff-shortcuts">
+        <h2>Get started</h2>
         <div className="toolbar">
-          {canManageSchool && <><Link className="text-link" to="/school-setup">स्कूल सेटअप / नई यूज़र ID →</Link><Link className="text-link" to="/students">नया विद्यार्थी जोड़ें →</Link><Link className="text-link" to="/academic-setup">कक्षा और प्रवेश सेटअप →</Link></>}
-          <Link className="text-link" to="/help">ऐप कैसे इस्तेमाल करें? →</Link>
+          {canManageSchool && <><Link className="text-link" to="/school-setup">School setup / Create user →</Link><Link className="text-link" to="/students">Add a student →</Link><Link className="text-link" to="/academic-setup">Set up classes and enrollment →</Link></>}
+          <Link className="text-link" to="/help">How to use the app →</Link>
         </div>
       </div>
       <div className="overview-grid">
