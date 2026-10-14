@@ -14,6 +14,7 @@ import AiAssistantPage from "./pages/AiAssistantPage";
 import AttendancePage from "./pages/AttendancePage";
 import AssessmentsPage from "./pages/AssessmentsPage";
 import SelfServicePage from "./pages/SelfServicePage";
+import StaffHelpPage from "./pages/StaffHelpPage";
 import StaffPage from "./pages/StaffPage";
 import AcademicSetupPage from "./pages/AcademicSetupPage";
 import SchoolSetupPage from "./pages/SchoolSetupPage";
@@ -27,6 +28,7 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
+            <Route path="/help" element={<StaffHelpPage />} />
             <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]} />}>
               <Route path="/staff" element={<StaffPage />} />
               <Route path="/students" element={<StudentsPage />} />

@@ -25,7 +25,8 @@ export default function LoginPage() {
       await login({ username: username.trim(), password });
       navigate(from, { replace: true });
     } catch (requestError) {
-      setError(getApiErrorInfo(requestError).message);
+      const info = getApiErrorInfo(requestError);
+      setError(info.status === 401 ? "The username or password is incorrect, or the account is inactive. Check your login username or contact your school administrator." : info.message);
     } finally {
       setSubmitting(false);
     }
@@ -44,7 +45,7 @@ export default function LoginPage() {
           {error && <p className="form-error" role="alert">{error}</p>}
           <button type="submit" className="primary-button auth-submit" disabled={submitting}>{submitting ? "Signing in..." : "Sign in"}</button>
         </form>
-        <p className="auth-note">Protected by role-based access control.</p>
+        <div className="auth-note"><strong>Need a new login account?</strong><p>Ask your school administrator to create it. Administrators can sign in and use School Setup → Create login account.</p><p>Starting a school for the first time? Sign in with the existing setup administrator account, then open School Setup.</p></div>
       </section>
       <aside className="auth-visual" aria-hidden="true"><div><p className="eyebrow">EduSphere AI</p><h2>One workspace for the entire school.</h2><p>Secure, role-aware school operations with intelligent assistance built in.</p></div></aside>
     </main>
