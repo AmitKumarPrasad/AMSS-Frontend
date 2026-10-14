@@ -34,7 +34,7 @@ export function HomePage() {
             Welcome back{user?.username ? `, ${user.username}` : ""}. Manage daily school operations from one workspace.
           </p>
         </div>
-        <div className="status-pill"><span /> Production connected</div>
+        <div className="status-pill"><span /> Signed in</div>
       </div>
 
       <div className="overview-grid">
@@ -50,13 +50,13 @@ export function HomePage() {
         </article>
         <article className="overview-card">
           <span>Backend</span>
-          <strong>Connected</strong>
-          <small>Secure REST APIs</small>
+          <strong>School APIs</strong>
+          <small>Open a module to load its current data</small>
         </article>
         <article className="overview-card">
           <span>AI services</span>
-          <strong>Available</strong>
-          <small>Role-aware assistant</small>
+          <strong>Assistant</strong>
+          <small>Open a conversation to check availability</small>
         </article>
       </div>
 

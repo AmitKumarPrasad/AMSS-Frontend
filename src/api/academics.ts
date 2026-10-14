@@ -14,20 +14,40 @@ export interface AcademicYear {
   name: string;
   startsOn: string;
   endsOn: string;
-  active: boolean;
+  status: string;
 }
 
 export interface SchoolClass {
   id: string;
   name: string;
   gradeLevel: number;
-  active: boolean;
+  status: string;
 }
 
 export interface Subject {
   id: string;
   code: string;
   name: string;
+}
+
+export interface Section { id: string; name: string; room?: string; status: string; }
+export interface TimetableEntry {
+  id: string; subjectId: string; dayOfWeek: string; startsAt: string; endsAt: string;
+  room?: string; status: string;
+}
+
+export async function listSections(schoolId: string, classId: string) {
+  return (await apiClient.get<ApiPage<Section>>(
+    `/api/v1/schools/${schoolId}/classes/${classId}/sections`,
+    { params: { page: 0, size: 100, status: "ACTIVE" } },
+  )).data;
+}
+
+export async function listTimetable(schoolId: string, sectionId: string) {
+  return (await apiClient.get<ApiPage<TimetableEntry>>(
+    `/api/v1/schools/${schoolId}/timetable/sections/${sectionId}`,
+    { params: { page: 0, size: 100 } },
+  )).data;
 }
 
 export async function listAcademicYears(schoolId: string) {

@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { apiClient } from "./client";
-import { listAcademicYears, listClasses, listSubjects } from "./academics";
+import { listAcademicYears, listClasses, listSubjects, listSections, listTimetable } from "./academics";
 
 vi.mock("./client", () => ({
   apiClient: {
@@ -9,6 +9,13 @@ vi.mock("./client", () => ({
 }));
 
 describe("academics api", () => {
+  it("loads section and timetable data from the school-scoped contracts", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ data: { content: [] } } as never);
+    await listSections("school-1", "class-1");
+    await listTimetable("school-1", "section-1");
+    expect(apiClient.get).toHaveBeenCalledWith("/api/v1/schools/school-1/classes/class-1/sections", { params: { page: 0, size: 100, status: "ACTIVE" } });
+    expect(apiClient.get).toHaveBeenCalledWith("/api/v1/schools/school-1/timetable/sections/section-1", { params: { page: 0, size: 100 } });
+  });
   it("lists academic years", async () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce({ data: { content: [] } } as never);
     await listAcademicYears("school-1");

@@ -15,6 +15,10 @@ export const apiClient = axios.create({
 });
 
 apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+  if (typeof FormData !== "undefined" && config.data instanceof FormData) {
+    // Let the browser supply the multipart boundary instead of serializing as JSON.
+    config.headers.delete("Content-Type");
+  }
   const token = useAuthStore.getState().accessToken;
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;

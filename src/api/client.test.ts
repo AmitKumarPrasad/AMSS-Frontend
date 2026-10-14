@@ -14,6 +14,7 @@ vi.mock("../auth/authStore", () => ({
 }));
 
 import { apiClient } from "./client";
+import { AxiosHeaders } from "axios";
 
 describe("api client", () => {
   beforeEach(() => {
@@ -39,6 +40,17 @@ describe("api client", () => {
 
   it("configures a bounded request timeout suitable for Render cold starts", () => {
     expect(apiClient.defaults.timeout).toBe(60_000);
+  });
+
+  it("keeps uploads as FormData and removes the JSON content type", async () => {
+    getState.mockReturnValue({ accessToken: "token-123", logout: vi.fn() });
+    const form = new FormData();
+    form.append("title", "School notice");
+    const handler = apiClient.interceptors.request.handlers?.find((item) => item.fulfilled)?.fulfilled;
+    const config = await handler?.({ data: form, headers: new AxiosHeaders({ "Content-Type": "application/json" }) } as never);
+    expect(config?.data).toBe(form);
+    expect(config?.headers.has("Content-Type")).toBe(false);
+    expect(config?.headers.Authorization).toBe("Bearer token-123");
   });
 
   it("logs the user out on a 401 response", async () => {
