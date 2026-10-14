@@ -3,6 +3,8 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { login as loginApi, type LoginRequest } from "../api/auth";
 import { isJwtExpired, userFromJwt, type AuthUser } from "./jwt";
 
+let sessionVersion = 0;
+
 interface AuthState {
   accessToken: string | null;
   user: AuthUser | null;
@@ -18,7 +20,9 @@ export const useAuthStore = create<AuthState>()(
       user: null,
       isAuthenticated: false,
       login: async (request) => {
+        const version = ++sessionVersion;
         const result = await loginApi(request);
+        if (version !== sessionVersion) throw new Error("Sign-in cancelled because the session changed.");
         if (!result.accessToken || isJwtExpired(result.accessToken)) {
           throw new Error("Authentication token is invalid or expired.");
         }
@@ -29,7 +33,10 @@ export const useAuthStore = create<AuthState>()(
           isAuthenticated: true,
         });
       },
-      logout: () => set({ accessToken: null, user: null, isAuthenticated: false }),
+      logout: () => {
+        sessionVersion++;
+        set({ accessToken: null, user: null, isAuthenticated: false });
+      },
     }),
     {
       name: "amss-auth",

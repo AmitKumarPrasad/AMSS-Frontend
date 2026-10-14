@@ -1,10 +1,15 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
+import { signOut } from "../auth/logout";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../auth/authStore";
 import { ROLES, hasAnyRole } from "../auth/roles";
 
 export default function AppShell() {
   const user = useAuthStore((state) => state.user);
   const logout = useAuthStore((state) => state.logout);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const handleLogout = () => signOut(queryClient, logout, navigate);
   const roles = user?.roles;
   const canManageSchool = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]);
   const canManageAcademics = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]);
@@ -40,13 +45,13 @@ export default function AppShell() {
         <div className="sidebar-footer">
           <div className="avatar">{(user?.username ?? "U").slice(0, 1).toUpperCase()}</div>
           <div className="user-copy"><strong>{user?.username ?? "User"}</strong><span>{roles?.[0] ?? "Authenticated"}</span></div>
-          <button type="button" className="logout-button" onClick={logout}>Log out</button>
+          <button type="button" className="logout-button" onClick={handleLogout}>Log out</button>
         </div>
       </aside>
       <div className="workspace">
         <header className="topbar">
           <div><span className="topbar-kicker">School Management</span><strong>EduSphere AI</strong></div>
-          <div className="topbar-actions"><span className="live-dot" /> Secure session</div>
+          <div className="topbar-actions"><span className="live-dot" /> Secure session<button type="button" className="topbar-logout" onClick={handleLogout}>Log out</button></div>
         </header>
         <main className="shell-content"><Outlet /></main>
       </div>
