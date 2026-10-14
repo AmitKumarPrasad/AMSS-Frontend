@@ -1,129 +1,24 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
-import { getStudents, type Student } from "../api/students";
+import { useRef, useState, type FormEvent } from "react";
+import { Link } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getApiErrorInfo } from "../api/errorHandling";
-import { getSchoolIdFromToken } from "../api/aiAssistant";
 import { useAuthStore } from "../auth/authStore";
-import { createAssessment, listAcademicYears, listAssessments, listClasses, listResults, saveResults, type AcademicYear, type Assessment, type Result, type SchoolClass } from "../api/assessments";
-
-function studentName(student: Student) {
-  return student.name ?? ([student.firstName, student.lastName].filter(Boolean).join(" ") || String(student.id));
-}
-
-export default function AssessmentsPage() {
-  const token = useAuthStore((state) => state.accessToken);
-  const schoolId = useMemo(() => getSchoolIdFromToken(token), [token]);
-  const [years, setYears] = useState<AcademicYear[]>([]);
-  const [classes, setClasses] = useState<SchoolClass[]>([]);
-  const [assessments, setAssessments] = useState<Assessment[]>([]);
-  const [students, setStudents] = useState<Student[]>([]);
-  const [results, setResults] = useState<Record<string, Result>>({});
-  const [yearId, setYearId] = useState("");
-  const [classId, setClassId] = useState("");
-  const [assessmentId, setAssessmentId] = useState("");
-  const [name, setName] = useState("");
-  const [assessmentDate, setAssessmentDate] = useState(new Date().toISOString().slice(0, 10));
-  const [maxMarks, setMaxMarks] = useState("100");
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (!schoolId) { setLoading(false); setError("Your session does not contain a school identifier."); return; }
-    void listAcademicYears(schoolId).then((data) => {
-      setYears(data);
-      if (data[0]) setYearId(data[0].id);
-    }).catch((requestError) => setError(getApiErrorInfo(requestError).message)).finally(() => setLoading(false));
-  }, [schoolId]);
-
-  useEffect(() => {
-    if (!schoolId || !yearId) return;
-    setClassId(""); setAssessmentId("");
-    void Promise.all([listClasses(schoolId, yearId), listAssessments(schoolId, yearId)])
-      .then(([classData, assessmentData]) => {
-        setClasses(classData); setAssessments(assessmentData);
-        if (classData[0]) setClassId(classData[0].id);
-        if (assessmentData[0]) setAssessmentId(assessmentData[0].id);
-      }).catch((requestError) => setError(getApiErrorInfo(requestError).message));
-  }, [schoolId, yearId]);
-
-  useEffect(() => {
-    if (!schoolId || !classId) return;
-    void getStudents(schoolId, { page: 0, size: 100, status: "ACTIVE" }).then((page) => setStudents(page.content))
-      .catch((requestError) => setError(getApiErrorInfo(requestError).message));
-  }, [schoolId, classId]);
-
-  useEffect(() => {
-    if (!schoolId || !assessmentId) return;
-    void listResults(schoolId, assessmentId).then((items) => setResults(Object.fromEntries(items.map((item) => [item.studentId, item]))))
-      .catch((requestError) => setError(getApiErrorInfo(requestError).message));
-  }, [schoolId, assessmentId]);
-
-  async function submitAssessment(event: FormEvent) {
-    event.preventDefault();
-    if (!schoolId || !yearId || !classId || !name.trim()) return;
-    setError(null); setMessage(null);
-    try {
-      const created = await createAssessment(schoolId, { academicYearId: yearId, classId, name: name.trim(), assessmentDate, maxMarks: Number(maxMarks) });
-      setAssessments((current) => [created, ...current]);
-      setAssessmentId(created.id);
-      setName("");
-      setMessage("Assessment created successfully.");
-    } catch (requestError) { setError(getApiErrorInfo(requestError).message); }
-  }
-
-  function updateResult(studentId: string, field: "marks" | "grade", value: string) {
-    setResults((current) => ({
-      ...current,
-      [studentId]: { ...(current[studentId] ?? { id: "", assessmentId, studentId, marks: 0, status: "RECORDED" }), [field]: field === "marks" ? Number(value) : value },
-    }));
-    setMessage(null);
-  }
-
-  async function submitResults() {
-    if (!schoolId || !assessmentId || saving) return;
-    setSaving(true); setError(null); setMessage(null);
-    try {
-      await saveResults(schoolId, assessmentId, students.map((student) => ({
-        studentId: String(student.id),
-        marks: results[String(student.id)]?.marks ?? 0,
-        grade: results[String(student.id)]?.grade || undefined,
-      })));
-      setMessage("Grades saved successfully.");
-    } catch (requestError) { setError(getApiErrorInfo(requestError).message); } finally { setSaving(false); }
-  }
-
-  if (loading) return <section className="page-section"><p className="state-message">Loading assessments…</p></section>;
-
-  return <section className="page-section" aria-labelledby="assessments-title">
-    <div className="page-heading"><div><p className="eyebrow">AMSS · Academics</p><h1 id="assessments-title">Exams & Grades</h1><p className="subtitle">Create assessments and record student marks and grades.</p></div></div>
-    {error && <p className="state-message error" role="alert">{error}</p>}
-    {message && <p className="state-message success" role="status">{message}</p>}
-
-    <div className="assessment-controls">
-      <label>Academic year<select value={yearId} onChange={(e) => setYearId(e.target.value)}>{years.map((year) => <option key={year.id} value={year.id}>{year.name} ({year.code})</option>)}</select></label>
-      <label>Class<select value={classId} onChange={(e) => setClassId(e.target.value)}>{classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}</select></label>
-      <label>Assessment<select value={assessmentId} onChange={(e) => setAssessmentId(e.target.value)}>{assessments.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.assessmentDate}</option>)}</select></label>
-    </div>
-
-    <form className="assessment-form" onSubmit={submitAssessment}>
-      <input aria-label="Assessment name" placeholder="Assessment name" value={name} onChange={(e) => setName(e.target.value)} required />
-      <input aria-label="Assessment date" type="date" value={assessmentDate} onChange={(e) => setAssessmentDate(e.target.value)} required />
-      <input aria-label="Maximum marks" type="number" min="0.01" step="0.01" value={maxMarks} onChange={(e) => setMaxMarks(e.target.value)} required />
-      <button className="primary-button" type="submit" disabled={!yearId || !classId}>Create assessment</button>
-    </form>
-
-    <div className="table-card">
-      {students.length === 0 ? <p className="state-message">No active students are available.</p> : <>
-        <table><thead><tr><th>Student</th><th>Admission No.</th><th>Marks</th><th>Grade</th></tr></thead>
-          <tbody>{students.map((student) => { const id = String(student.id); const result = results[id]; return <tr key={id}>
-            <td>{studentName(student)}</td><td>{student.admissionNumber ?? "—"}</td>
-            <td><input className="grade-input" type="number" min="0" step="0.01" value={result?.marks ?? 0} onChange={(e) => updateResult(id, "marks", e.target.value)} /></td>
-            <td><input className="grade-input" maxLength={16} value={result?.grade ?? ""} onChange={(e) => updateResult(id, "grade", e.target.value)} /></td>
-          </tr>; })}</tbody>
-        </table>
-        <div className="assessment-actions"><button type="button" className="primary-button" onClick={() => void submitResults()} disabled={!assessmentId || saving}>{saving ? "Saving…" : "Save grades"}</button></div>
-      </>}
-    </div>
-  </section>;
+import { hasAnyRole, ROLES } from "../auth/roles";
+import { createAssessment,listAcademicYears,listAssessments,listClasses,listResults,listEnrolledStudents,saveResults } from "../api/assessments";
+export default function AssessmentsPage(){
+ const user=useAuthStore(s=>s.user);const school=user?.schoolId;const admin=hasAnyRole(user?.roles,[ROLES.SCHOOL_ADMIN,ROLES.SUPER_ADMIN]);const cache=useQueryClient();
+ const [selectedYear,setYear]=useState("");const [selectedClass,setClass]=useState("");const [selectedAssessment,setAssessment]=useState("");const [edits,setEdits]=useState<Record<string,{marks:string;grade:string}>>({});const [message,setMessage]=useState("");const [error,setError]=useState("");const [busy,setBusy]=useState(false);const lock=useRef(false);
+ const years=useQuery({queryKey:["exam-years",school],enabled:!!school,queryFn:()=>listAcademicYears(school!)});const year=selectedYear||years.data?.[0]?.id||"";
+ const classes=useQuery({queryKey:["exam-classes",school,year],enabled:!!school&&!!year,queryFn:()=>listClasses(school!,year)});const cls=selectedClass||classes.data?.find(c=>c.status==="ACTIVE")?.id||"";
+ const assessments=useQuery({queryKey:["exams",school,year],enabled:!!school&&!!year,queryFn:()=>listAssessments(school!,year)});const available=assessments.data?.filter(a=>a.classId===cls)??[];const assessment=available.find(a=>a.id===selectedAssessment)??available[0];
+ const students=useQuery({queryKey:["exam-students",school,cls],enabled:!!school&&!!cls,queryFn:()=>listEnrolledStudents(school!,cls)});
+ const results=useQuery({queryKey:["exam-results",school,assessment?.id],enabled:!!school&&!!assessment,queryFn:()=>listResults(school!,assessment!.id)});
+ function value(id:string){const saved=results.data?.find(r=>r.studentId===id);return edits[`${assessment?.id}:${id}`]??{marks:saved?String(saved.marks):"",grade:saved?.grade??""};}
+ async function create(e:FormEvent<HTMLFormElement>){e.preventDefault();if(lock.current||!school||!year||!cls)return;const form=e.currentTarget;const v=Object.fromEntries(new FormData(form));lock.current=true;setBusy(true);setError("");setMessage("");try{const a=await createAssessment(school,{academicYearId:year,classId:cls,name:String(v.name).trim(),assessmentDate:String(v.date),maxMarks:Number(v.maxMarks)});await cache.invalidateQueries({queryKey:["exams",school,year]});setAssessment(a.id);form.reset();setMessage("Assessment created successfully.");}catch(err){setError(getApiErrorInfo(err).message);}finally{lock.current=false;setBusy(false);}}
+ async function save(){if(lock.current||!school||!assessment)return;const entries=(students.data??[]).map(s=>({studentId:String(s.id),...value(String(s.id))})).filter(e=>e.marks.trim()!=="");if(!entries.length){setError("Enter marks for at least one enrolled student.");return;}if(entries.some(e=>!Number.isFinite(Number(e.marks))||Number(e.marks)<0||Number(e.marks)>assessment.maxMarks)){setError(`Marks must be between 0 and ${assessment.maxMarks}.`);return;}lock.current=true;setBusy(true);setError("");setMessage("");try{await saveResults(school,assessment.id,entries.map(e=>({...e,marks:Number(e.marks),grade:e.grade||undefined})));await cache.invalidateQueries({queryKey:["exam-results",school,assessment.id]});setMessage("Grades saved successfully.");}catch(err){setError(getApiErrorInfo(err).message);}finally{lock.current=false;setBusy(false);}}
+ return <section className="page-section"><h1>Exams &amp; Grades</h1><p>Choose the academic year and class. Marks are recorded for students enrolled in that class.</p>{admin&&<Link className="text-link" to="/academic-setup">Set up academic year, class and student enrollment →</Link>}{[years,classes,assessments,students,results].filter(q=>q.isError).map((q,i)=><p role="alert" key={i}>{getApiErrorInfo(q.error).message}</p>)}{error&&<p role="alert" className="error">{error}</p>}{message&&<p role="status">{message}</p>}
+ {years.isLoading?<p>Loading academic years…</p>:years.data?.length===0?<p>No active academic year. Create and activate a year in Academic Setup first.</p>:<><div className="assessment-controls"><label>Academic year<select value={year} onChange={e=>{setYear(e.target.value);setClass("");setAssessment("");setError("");setMessage("");}}>{years.data?.map(y=><option key={y.id} value={y.id}>{y.name}</option>)}</select></label><label>Class<select value={cls} onChange={e=>{setClass(e.target.value);setAssessment("");setError("");setMessage("");}}><option value="">Select class</option>{classes.data?.filter(c=>c.status==="ACTIVE").map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label><label>Assessment<select value={assessment?.id??""} onChange={e=>{setAssessment(e.target.value);setError("");setMessage("");}}><option value="">Select assessment</option>{available.map(a=><option key={a.id} value={a.id}>{a.name} ({a.status})</option>)}</select></label></div>
+ {!classes.isLoading&&!cls&&<p>No active classes. Add a class in Academic Setup.</p>}{cls&&<form className="assessment-form" onSubmit={create}><input name="name" aria-label="Assessment name" placeholder="Assessment name" maxLength={120} required/><input name="date" aria-label="Assessment date" type="date" max={new Date().toISOString().slice(0,10)} defaultValue={new Date().toISOString().slice(0,10)} required/><input name="maxMarks" aria-label="Maximum marks" type="number" min="0.01" step="0.01" defaultValue="100" required/><button disabled={busy} className="primary-button">Create assessment</button></form>}
+ {students.isLoading&&cls&&<p>Loading enrolled students…</p>}{cls&&students.data?.length===0&&<p>No students enrolled in this class. Enroll students in its section before entering grades.</p>}{cls&&!assessment&&<p>Create or select an assessment to enter marks.</p>}{assessment&&students.data&&students.data.length>0&&!students.isError&&<><div className="table-card"><table><thead><tr><th>Student</th><th>Admission No.</th><th>Marks / {assessment.maxMarks}</th><th>Grade</th></tr></thead><tbody>{students.data.map(s=>{const id=String(s.id);const v=value(id);return <tr key={id}><td>{[s.firstName,s.lastName].filter(Boolean).join(" ")||s.name}</td><td>{s.admissionNumber}</td><td><input type="number" min="0" max={assessment.maxMarks} step="0.01" value={v.marks} disabled={busy||results.isLoading||results.isError||assessment.status!=="DRAFT"} onChange={e=>setEdits(p=>({...p,[`${assessment.id}:${id}`]:{...v,marks:e.target.value}}))}/></td><td><input maxLength={16} value={v.grade} disabled={busy||results.isLoading||results.isError||assessment.status!=="DRAFT"} onChange={e=>setEdits(p=>({...p,[`${assessment.id}:${id}`]:{...v,grade:e.target.value}}))}/></td></tr>;})}</tbody></table></div><button className="primary-button" disabled={busy||results.isLoading||results.isError||assessment.status!=="DRAFT"} onClick={()=>void save()}>{busy?"Saving…":"Save grades"}</button>{assessment.status!=="DRAFT"&&<p>This assessment is read-only. Only draft assessments allow grade changes.</p>}</>}</>}
+ </section>;
 }

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { apiClient } from "./client";
-import { listAcademicYears, createAssessment, saveResults } from "./assessments";
+import { listAcademicYears, createAssessment, saveResults, listEnrolledStudents } from "./assessments";
 
 vi.mock("./client", () => ({ apiClient: { get: vi.fn(), post: vi.fn() } }));
 
@@ -27,4 +27,22 @@ describe("assessments API", () => {
     expect(apiClient.post).toHaveBeenCalledWith("/api/v1/schools/school-1/assessments/a1/results/bulk", { entries: [{ studentId: "s1", marks: 88, grade: "A" }] });
     expect(result[0].grade).toBe("A");
   });
+});
+
+describe("class enrollment for grading",()=>{
+ beforeEach(()=>vi.clearAllMocks());
+ it("includes only active enrolled students across pages",async()=>{
+  const get=vi.mocked(apiClient.get);
+  get.mockResolvedValueOnce({data:{content:[{id:"section-a"}]}} as never);
+  get.mockResolvedValueOnce({data:{content:[{studentId:"a",status:"ACTIVE"},{studentId:"b",status:"INACTIVE"}],totalPages:2}} as never);
+  get.mockResolvedValueOnce({data:{content:[{studentId:"c",status:"ACTIVE"}],totalPages:2}} as never);
+  get.mockResolvedValueOnce({data:{content:[{id:"a"},{id:"b"}],totalPages:2}} as never);
+  get.mockResolvedValueOnce({data:{content:[{id:"c"}],totalPages:2}} as never);
+  expect((await listEnrolledStudents("school-1","class-1")).map(s=>s.id)).toEqual(["a","c"]);
+ });
+ it("does not load school-wide students when no section exists",async()=>{
+  vi.mocked(apiClient.get).mockResolvedValueOnce({data:{content:[]}} as never);
+  expect(await listEnrolledStudents("school-1","class-1")).toEqual([]);
+  expect(apiClient.get).toHaveBeenCalledTimes(1);
+ });
 });
