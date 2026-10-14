@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+import { ROLES, hasAnyRole } from "../auth/roles";
 import TimetablePanel from "../components/TimetablePanel";
 import { useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "../auth/authStore";
@@ -8,6 +10,7 @@ import { listAcademicYears, listClasses, listSubjects, type AcademicYear, type S
 type AcademicTab = "classes" | "subjects" | "timetable";
 
 export default function AcademicsPage() {
+  const admin = hasAnyRole(useAuthStore(s=>s.user?.roles),[ROLES.SCHOOL_ADMIN,ROLES.SUPER_ADMIN]);
   const accessToken = useAuthStore((state) => state.accessToken);
   const schoolId = useMemo(() => getSchoolIdFromToken(accessToken), [accessToken]);
   const [tab, setTab] = useState<AcademicTab>("classes");
@@ -79,6 +82,8 @@ export default function AcademicsPage() {
         </div>
       </div>
 
+      {admin && <Link className="text-link" to="/academic-setup">Create academic year, classes, sections, subjects and enrollment →</Link>}
+      {academicYears.length === 0 && <p>No academic year exists yet. Start with Academic Setup and activate your year.</p>}
       {error && <p className="state-message error" role="alert">{error}</p>}
 
       <div className="academic-summary">
