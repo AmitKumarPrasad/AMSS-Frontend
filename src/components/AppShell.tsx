@@ -34,6 +34,7 @@ export default function AppShell() {
           {canManageSchool && <NavLink className={linkClass} to="/admin/operations">Operations</NavLink>}
           {canManageSchool && <NavLink className={linkClass} to="/academic-setup">Academic Setup</NavLink>}
           {canManageSchool && <NavLink className={linkClass} to="/school-setup">School Setup</NavLink>}
+          <NavLink className={linkClass} to="/help">मदद / Help</NavLink>
           <NavLink className={linkClass} to="/ai-assistant">AI Assistant</NavLink>
         </nav>
         <div className="sidebar-footer">

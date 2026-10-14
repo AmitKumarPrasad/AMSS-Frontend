@@ -203,3 +203,9 @@ h1, h2, h3, p { margin-top: 0; }
 .operation-form { padding: 1rem; margin-block: 1rem; }
 .operation-form .toolbar { flex-wrap: wrap; }
 .operation-form h3 { margin-top: 0; }
+
+.staff-shortcuts, .help-card { padding: 1.25rem; margin-block: 1rem; }
+.staff-shortcuts { border: 1px solid #b8d6df; border-radius: 16px; background: #f0f8fa; }
+.help-card li { margin-bottom: .6rem; line-height: 1.7; }
+.help-card p, .auth-note p { line-height: 1.7; }
+.staff-shortcuts .toolbar { flex-wrap: wrap; gap: 1rem; }

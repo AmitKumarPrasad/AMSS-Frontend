@@ -16,7 +16,7 @@ export function HomePage() {
   const canManageFinance = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.ACCOUNTANT]);
 
   const modules = [
-    canManageSchool && { title: "Students", copy: "Student records, guardians and enrolment.", to: "/students", tone: "blue" },
+    canManageAcademics && { title: "Students", copy: "Student records and active/inactive status.", to: "/students", tone: "blue" },
     canManageAcademics && { title: "Attendance", copy: "Daily attendance and classroom status.", to: "/attendance", tone: "green" },
     canManageAcademics && { title: "Academics", copy: "Classes, subjects and timetable.", to: "/academics", tone: "violet" },
     canManageAcademics && { title: "Exams & Grades", copy: "Assessments, marks and report workflows.", to: "/assessments", tone: "orange" },
@@ -37,6 +37,13 @@ export function HomePage() {
         <div className="status-pill"><span /> Signed in</div>
       </div>
 
+      <div className="staff-shortcuts" lang="hi">
+        <h2>यहाँ से शुरू करें</h2>
+        <div className="toolbar">
+          {canManageSchool && <><Link className="text-link" to="/school-setup">स्कूल सेटअप / नई यूज़र ID →</Link><Link className="text-link" to="/students">नया विद्यार्थी जोड़ें →</Link><Link className="text-link" to="/academic-setup">कक्षा और प्रवेश सेटअप →</Link></>}
+          <Link className="text-link" to="/help">ऐप कैसे इस्तेमाल करें? →</Link>
+        </div>
+      </div>
       <div className="overview-grid">
         <article className="overview-card">
           <span>Signed in as</span>
