@@ -6,7 +6,7 @@ import { useAuthStore } from "../auth/authStore";
 import OperationForm, { type Field } from "../components/OperationForm";
 interface Profile {name:string;timezone:string;initialSetupAvailable:boolean;}
 interface Account {id:string;username:string;displayName:string;status:string;roles:string[];}
-const credentials:Field[]=[{name:"username",label:"Username",maxLength:120,minLength:3},{name:"email",label:"Email",type:"email",maxLength:254},{name:"displayName",label:"Full name"},{name:"password",label:"Password (12+ characters)",type:"password",minLength:12,maxLength:128}];
+const credentials:Field[]=[{name:"username",label:"Username",maxLength:120,minLength:3},{name:"email",label:"Email",type:"email",maxLength:254},{name:"displayName",label:"Full name"},{name:"password",label:"Password (12+ characters, max 72 bytes)",type:"password",minLength:12,maxLength:72}];
 export default function SchoolSetupPage(){
  const user=useAuthStore(s=>s.user); const school=user?.schoolId;const login=useAuthStore(s=>s.login);const cache=useQueryClient();const navigate=useNavigate();const root=`/api/v1/schools/${school}/setup`;
  const profile=useQuery({queryKey:["school-profile",school],enabled:!!school,queryFn:async()=>(await apiClient.get<Profile>(`${root}/profile`)).data});
