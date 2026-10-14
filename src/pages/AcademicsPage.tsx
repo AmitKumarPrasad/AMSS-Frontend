@@ -1,3 +1,4 @@
+import TimetablePanel from "../components/TimetablePanel";
 import { useEffect, useMemo, useState } from "react";
 import { useAuthStore } from "../auth/authStore";
 import { getSchoolIdFromToken } from "../api/aiAssistant";
@@ -5,14 +6,6 @@ import { getApiErrorInfo } from "../api/errorHandling";
 import { listAcademicYears, listClasses, listSubjects, type AcademicYear, type SchoolClass, type Subject } from "../api/academics";
 
 type AcademicTab = "classes" | "subjects" | "timetable";
-
-const timetable = [
-  { day: "Monday", periods: "Mathematics · Science · English · Computer" },
-  { day: "Tuesday", periods: "English · Mathematics · Science · Activity" },
-  { day: "Wednesday", periods: "Science · English · Mathematics · Computer" },
-  { day: "Thursday", periods: "Mathematics · Activity · English · Science" },
-  { day: "Friday", periods: "English · Science · Mathematics · Library" },
-];
 
 export default function AcademicsPage() {
   const accessToken = useAuthStore((state) => state.accessToken);
@@ -41,7 +34,7 @@ export default function AcademicsPage() {
         const years = yearPage.content ?? [];
         setAcademicYears(years);
         setSubjects(subjectPage.content ?? []);
-        setSelectedYearId((current) => current || years.find((year) => year.active)?.id || years[0]?.id || "");
+        setSelectedYearId((current) => current || years.find((year) => year.status === "ACTIVE")?.id || years[0]?.id || "");
       })
       .catch((err) => {
         if (active) setError(getApiErrorInfo(err).message);
@@ -91,7 +84,7 @@ export default function AcademicsPage() {
       <div className="academic-summary">
         <article><strong>{classes.length}</strong><span>Classes</span></article>
         <article><strong>{subjects.length}</strong><span>Subjects</span></article>
-        <article><strong>{timetable.length}</strong><span>Teaching days</span></article>
+        <article><strong>{academicYears.length}</strong><span>Academic years</span></article>
       </div>
 
       <div className="academic-tabs" role="tablist" aria-label="Academic sections">
@@ -100,13 +93,13 @@ export default function AcademicsPage() {
         <button type="button" className={tab === "timetable" ? "active" : ""} onClick={() => setTab("timetable")}>Timetable</button>
       </div>
 
-      {tab !== "timetable" && (
+      {(
         <div className="filter-bar">
           <label>
             Academic year
             <select value={selectedYearId} onChange={(event) => setSelectedYearId(event.target.value)}>
               <option value="">Select academic year</option>
-              {academicYears.map((year) => <option key={year.id} value={year.id}>{year.name}{year.active ? " (Active)" : ""}</option>)}
+              {academicYears.map((year) => <option key={year.id} value={year.id}>{year.name}{year.status === "ACTIVE" ? " (Active)" : ""}</option>)}
             </select>
           </label>
         </div>
@@ -117,7 +110,7 @@ export default function AcademicsPage() {
           {classesLoading ? <p className="state-message">Loading classes…</p> : classes.length === 0 ? <p className="state-message">No classes are available for this academic year.</p> : classes.map((item) => (
             <article className="academic-card" key={item.id}>
               <div><p className="eyebrow">Class</p><h2>{item.name}</h2></div>
-              <dl><div><dt>Grade</dt><dd>{item.gradeLevel}</dd></div><div><dt>Status</dt><dd>{item.active ? "Active" : "Inactive"}</dd></div></dl>
+              <dl><div><dt>Grade</dt><dd>{item.gradeLevel}</dd></div><div><dt>Status</dt><dd>{item.status === "ACTIVE" ? "Active" : "Inactive"}</dd></div></dl>
             </article>
           ))}
         </div>
@@ -130,14 +123,7 @@ export default function AcademicsPage() {
         </div>
       )}
 
-      {tab === "timetable" && (
-        <div className="table-card">
-          <table><thead><tr><th>Day</th><th>Periods</th></tr></thead>
-          <tbody>{timetable.map((item) => <tr key={item.day}><td>{item.day}</td><td>{item.periods}</td></tr>)}</tbody></table>
-        </div>
-      )}
-
-      <p className="state-message academic-note">Classes, academic years and subjects are now loaded from the verified backend contracts. Timetable remains presentation-only until its read contract is available.</p>
+      {tab === "timetable" && schoolId && <TimetablePanel schoolId={schoolId} classes={classes} subjects={subjects} />}
     </section>
   );
 }

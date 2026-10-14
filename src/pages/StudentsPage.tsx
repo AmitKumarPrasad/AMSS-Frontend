@@ -19,7 +19,7 @@ export default function StudentsPage() {
   });
 
   const students = query.data?.content ?? [];
-  const totalPages = query.data?.totalPages ?? 1;
+  const totalPages = Math.max(1, query.data?.totalPages ?? 1);
   const errorMessage = !schoolId ? "Your session does not contain a school identifier." : query.isError ? getApiErrorInfo(query.error).message : "";
 
   function updateSearch(value: string) {

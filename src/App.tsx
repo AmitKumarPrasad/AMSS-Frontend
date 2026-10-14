@@ -24,11 +24,15 @@ export default function App() {
         <Route element={<ProtectedRoute />}>
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
-            <Route path="/students" element={<StudentsPage />} />
-            <Route path="/attendance" element={<AttendancePage />} />
-            <Route path="/academics" element={<AcademicsPage />} />
-            <Route path="/assessments" element={<AssessmentsPage />} />
-            <Route path="/finance" element={<FinancePage />} />
+            <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]} />}>
+              <Route path="/students" element={<StudentsPage />} />
+              <Route path="/attendance" element={<AttendancePage />} />
+              <Route path="/academics" element={<AcademicsPage />} />
+              <Route path="/assessments" element={<AssessmentsPage />} />
+            </Route>
+            <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.ACCOUNTANT, ROLES.TEACHER]} />}>
+              <Route path="/finance" element={<FinancePage />} />
+            </Route>
             <Route path="/notifications-documents" element={<NotificationsDocumentsPage />} />
             <Route path="/ai-assistant" element={<AiAssistantPage />} />
             <Route element={<ProtectedRoute allowedRoles={[ROLES.PARENT, ROLES.STUDENT]} />}>

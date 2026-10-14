@@ -35,6 +35,7 @@ export async function getStudents(
   schoolId: string,
   params: { page: number; size: number; status?: string; search?: string },
 ): Promise<StudentPage> {
+  if (!schoolId) throw new Error("Your session does not contain a school identifier.");
   const response = await apiClient.get<StudentApiResponse>(
     `/api/v1/schools/${schoolId}/students`,
     {

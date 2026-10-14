@@ -7,6 +7,11 @@ vi.mock("./client", () => ({ apiClient: { get: vi.fn() } }));
 describe("getStudents", () => {
   beforeEach(() => vi.clearAllMocks());
 
+  it("does not send a request without school context", async () => {
+    await expect(getStudents("", { page: 0, size: 20 })).rejects.toThrow("school identifier");
+    expect(apiClient.get).not.toHaveBeenCalled();
+  });
+
   it("uses the tenant-scoped backend endpoint and query contract", async () => {
     vi.mocked(apiClient.get).mockResolvedValueOnce({
       data: { content: [{ id: "s1", name: "Asha" }], totalElements: 21, totalPages: 3, number: 1, size: 10 },
