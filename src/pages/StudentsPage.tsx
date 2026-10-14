@@ -54,7 +54,6 @@ export default function StudentsPage() {
         <label>
           Status
           <select value={status} onChange={(event) => updateStatus(event.target.value)}>
-            <option value="">All statuses</option>
             <option value="ACTIVE">Active</option>
             <option value="INACTIVE">Inactive</option>
           </select>
