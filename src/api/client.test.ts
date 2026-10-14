@@ -38,6 +38,13 @@ describe("api client", () => {
     );
   });
 
+  it("does not attach the retired session to a new login", async () => {
+    getState.mockReturnValue({accessToken:"retired-token",logout:vi.fn()});
+    const handler=apiClient.interceptors.request.handlers?.find(item=>item.fulfilled)?.fulfilled;
+    const request=await handler?.({url:"/api/v1/auth/login",headers:new AxiosHeaders()} as never);
+    expect(request?.headers.Authorization).toBeUndefined();
+  });
+
   it("configures a bounded request timeout suitable for Render cold starts", () => {
     expect(apiClient.defaults.timeout).toBe(60_000);
   });

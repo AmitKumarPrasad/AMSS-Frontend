@@ -14,6 +14,9 @@ import AiAssistantPage from "./pages/AiAssistantPage";
 import AttendancePage from "./pages/AttendancePage";
 import AssessmentsPage from "./pages/AssessmentsPage";
 import SelfServicePage from "./pages/SelfServicePage";
+import StaffPage from "./pages/StaffPage";
+import AcademicSetupPage from "./pages/AcademicSetupPage";
+import SchoolSetupPage from "./pages/SchoolSetupPage";
 import AdminOperationsPage from "./pages/AdminOperationsPage";
 
 export default function App() {
@@ -25,6 +28,7 @@ export default function App() {
           <Route element={<AppShell />}>
             <Route path="/" element={<HomePage />} />
             <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN, ROLES.TEACHER]} />}>
+              <Route path="/staff" element={<StaffPage />} />
               <Route path="/students" element={<StudentsPage />} />
               <Route path="/attendance" element={<AttendancePage />} />
               <Route path="/academics" element={<AcademicsPage />} />
@@ -39,6 +43,8 @@ export default function App() {
               <Route path="/self-service" element={<SelfServicePage />} />
             </Route>
             <Route element={<ProtectedRoute allowedRoles={[ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]} />}>
+              <Route path="/academic-setup" element={<AcademicSetupPage />} />
+              <Route path="/school-setup" element={<SchoolSetupPage />} />
               <Route path="/admin/operations" element={<AdminOperationsPage />} />
             </Route>
           </Route>

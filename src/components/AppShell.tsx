@@ -23,7 +23,8 @@ export default function AppShell() {
         </div>
         <nav className="sidebar-nav">
           <NavLink className={linkClass} to="/" end>Dashboard</NavLink>
-          {canManageSchool && <NavLink className={linkClass} to="/students">Students</NavLink>}
+          {canManageAcademics && <NavLink className={linkClass} to="/students">Students</NavLink>}
+          {canManageAcademics && <NavLink className={linkClass} to="/staff">Staff</NavLink>}
           {canManageAttendance && <NavLink className={linkClass} to="/attendance">Attendance</NavLink>}
           {canManageAcademics && <NavLink className={linkClass} to="/academics">Academics</NavLink>}
           {canManageAcademics && <NavLink className={linkClass} to="/assessments">Exams & Grades</NavLink>}
@@ -31,6 +32,8 @@ export default function AppShell() {
           <NavLink className={linkClass} to="/notifications-documents">Documents</NavLink>
           {canSelfServe && <NavLink className={linkClass} to="/self-service">My Portal</NavLink>}
           {canManageSchool && <NavLink className={linkClass} to="/admin/operations">Operations</NavLink>}
+          {canManageSchool && <NavLink className={linkClass} to="/academic-setup">Academic Setup</NavLink>}
+          {canManageSchool && <NavLink className={linkClass} to="/school-setup">School Setup</NavLink>}
           <NavLink className={linkClass} to="/ai-assistant">AI Assistant</NavLink>
         </nav>
         <div className="sidebar-footer">

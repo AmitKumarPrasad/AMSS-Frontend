@@ -20,7 +20,7 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
     config.headers.delete("Content-Type");
   }
   const token = useAuthStore.getState().accessToken;
-  if (token) {
+  if (token && config.url !== "/api/v1/auth/login") {
     config.headers.Authorization = `Bearer ${token}`;
   }
 

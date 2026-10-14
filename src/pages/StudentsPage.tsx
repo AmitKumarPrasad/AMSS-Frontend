@@ -1,13 +1,22 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { getApiErrorInfo } from "../api/errorHandling";
 import { getStudents } from "../api/students";
 import { useAuthStore } from "../auth/authStore";
 
+import OperationForm from "../components/OperationForm";
+import { apiClient } from "../api/client";
+import { hasAnyRole, ROLES } from "../auth/roles";
+
 const PAGE_SIZE = 20;
 
 export default function StudentsPage() {
   const schoolId = useAuthStore((state) => state.user?.schoolId);
+  const cache = useQueryClient();
+  const roles = useAuthStore(s => s.user?.roles);
+  const admin = hasAnyRole(roles, [ROLES.SUPER_ADMIN, ROLES.SCHOOL_ADMIN]);
+  const root = `/api/v1/schools/${schoolId}/students`;
+  const refresh = async () => { await cache.invalidateQueries({queryKey:["students",schoolId]}); };
   const [page, setPage] = useState(0);
   const [status, setStatus] = useState("ACTIVE");
   const [search, setSearch] = useState("");
@@ -42,6 +51,7 @@ export default function StudentsPage() {
         </div>
       </div>
 
+      {admin && schoolId && <OperationForm title="Add Student" submitLabel="Add student" fields={[{name:"admissionNumber",label:"Admission number",maxLength:50},{name:"firstName",label:"First name",maxLength:100},{name:"lastName",label:"Last name",required:false,maxLength:100},{name:"dateOfBirth",label:"Date of birth",type:"date",required:false,max:new Date().toISOString().slice(0,10)}]} onSubmit={async v=>{await apiClient.post(root,{...v,dateOfBirth:v.dateOfBirth||null});await refresh();}}/>}
       <div className="toolbar">
         <label>
           Search
@@ -78,8 +88,7 @@ export default function StudentsPage() {
                 <tr>
                   <th>Admission No.</th>
                   <th>Name</th>
-                  <th>Class</th>
-                  <th>Email</th>
+                  <th>Actions</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -88,14 +97,13 @@ export default function StudentsPage() {
                   <tr key={student.id}>
                     <td>{student.admissionNumber ?? "—"}</td>
                     <td>{student.name ?? ([student.firstName, student.lastName].filter(Boolean).join(" ") || "—")}</td>
-                    <td>{[student.className, student.sectionName].filter(Boolean).join(" / ") || "—"}</td>
-                    <td>{student.email ?? "—"}</td>
+                    <td>{admin && <OperationForm title="Student access" fields={[]} submitLabel={student.status === "ACTIVE" ? "Deactivate" : "Activate"} onSubmit={async()=>{await apiClient.patch(`${root}/${student.id}/status`,null,{params:{active:student.status!=="ACTIVE"}});await refresh();}}/>}</td>
                     <td><span className="badge">{student.status ?? "—"}</span></td>
                   </tr>
                 ))}
                 {students.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="empty-cell">No students found.</td>
+                    <td colSpan={4} className="empty-cell">No students found.</td>
                   </tr>
                 )}
               </tbody>
