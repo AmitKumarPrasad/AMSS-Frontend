@@ -49,7 +49,7 @@ export default function AssessmentsPage() {
 
   useEffect(() => {
     if (!schoolId || !classId) return;
-    void getStudents({ page: 0, size: 100, status: "ACTIVE" }).then((page) => setStudents(page.content))
+    void getStudents(schoolId, { page: 0, size: 100, status: "ACTIVE" }).then((page) => setStudents(page.content))
       .catch((requestError) => setError(getApiErrorInfo(requestError).message));
   }, [schoolId, classId]);
 

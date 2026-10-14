@@ -40,7 +40,7 @@ export default function FinancePage() {
     if (!schoolId) return;
     setLoading(true);
     setError(null);
-    Promise.all([listInvoices(schoolId, { status: status || undefined }), getStudents({ page: 0, size: 100 })])
+    Promise.all([listInvoices(schoolId, { status: status || undefined }), getStudents(schoolId, { page: 0, size: 100, status: "ACTIVE" })])
       .then(([invoicePage, studentPage]) => {
         setInvoices(invoicePage.content ?? []);
         setStudents(studentPage.content ?? []);

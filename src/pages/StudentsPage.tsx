@@ -2,22 +2,25 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { getApiErrorInfo } from "../api/errorHandling";
 import { getStudents } from "../api/students";
+import { useAuthStore } from "../auth/authStore";
 
 const PAGE_SIZE = 20;
 
 export default function StudentsPage() {
+  const schoolId = useAuthStore((state) => state.user?.schoolId);
   const [page, setPage] = useState(0);
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState("ACTIVE");
   const [search, setSearch] = useState("");
 
   const query = useQuery({
-    queryKey: ["students", page, status, search],
-    queryFn: () => getStudents({ page, size: PAGE_SIZE, status, search }),
+    queryKey: ["students", schoolId, page, status, search],
+    enabled: Boolean(schoolId),
+    queryFn: () => getStudents(schoolId!, { page, size: PAGE_SIZE, status, search }),
   });
 
   const students = query.data?.content ?? [];
   const totalPages = query.data?.totalPages ?? 1;
-  const errorMessage = query.isError ? getApiErrorInfo(query.error).message : "";
+  const errorMessage = !schoolId ? "Your session does not contain a school identifier." : query.isError ? getApiErrorInfo(query.error).message : "";
 
   function updateSearch(value: string) {
     setPage(0);
@@ -59,16 +62,16 @@ export default function StudentsPage() {
       </div>
 
       {query.isLoading && <p className="state-message">Loading students…</p>}
-      {query.isError && (
+      {errorMessage && (
         <div className="state-message error" role="alert">
           <p>{errorMessage}</p>
-          <button type="button" onClick={() => query.refetch()} disabled={query.isFetching}>
+          {schoolId && <button type="button" onClick={() => query.refetch()} disabled={query.isFetching}>
             {query.isFetching ? "Retrying…" : "Retry"}
-          </button>
+          </button>}
         </div>
       )}
 
-      {!query.isLoading && !query.isError && (
+      {schoolId && !query.isLoading && !query.isError && (
         <>
           <div className="table-card">
             <table>
