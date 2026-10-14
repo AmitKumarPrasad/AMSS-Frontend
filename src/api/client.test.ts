@@ -72,6 +72,20 @@ describe("api client", () => {
     expect(logout).toHaveBeenCalledTimes(1);
   });
 
+  it("ignores unauthorized replies from an older session", async () => {
+    const logout=vi.fn();getState.mockReturnValue({accessToken:"new-token",logout});
+    const error={response:{status:401},config:{url:"/api/v1/schools/s1/students",headers:{Authorization:"Bearer old-token"}}};
+    const handler=apiClient.interceptors.response.handlers?.find(item=>item.rejected)?.rejected;
+    await expect(handler?.(error as never)).rejects.toBe(error);expect(logout).not.toHaveBeenCalled();
+  });
+
+  it("does not clear a session because a login attempt was rejected", async () => {
+    const logout=vi.fn();getState.mockReturnValue({accessToken:"new-token",logout});
+    const error={response:{status:401},config:{url:"/api/v1/auth/login",headers:{}}};
+    const handler=apiClient.interceptors.response.handlers?.find(item=>item.rejected)?.rejected;
+    await expect(handler?.(error as never)).rejects.toBe(error);expect(logout).not.toHaveBeenCalled();
+  });
+
   it("preserves non-authentication errors", async () => {
     const logout = vi.fn();
     getState.mockReturnValue({ accessToken: "token-123", logout });
