@@ -199,3 +199,7 @@ h1, h2, h3, p { margin-top: 0; }
 .assessment-actions { display: flex; justify-content: flex-end; padding: 16px; }
 .grade-input { width: 120px; box-sizing: border-box; padding: 8px 10px; border: 1px solid #b9c2d0; border-radius: 7px; }
 @media (max-width: 800px) { .assessment-controls, .assessment-form { grid-template-columns: 1fr; } }
+
+.operation-form { padding: 1rem; margin-block: 1rem; }
+.operation-form .toolbar { flex-wrap: wrap; }
+.operation-form h3 { margin-top: 0; }
