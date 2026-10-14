@@ -31,8 +31,11 @@ apiClient.interceptors.request.use((config: InternalAxiosRequestConfig) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    if (error.response?.status === 401) {
-      useAuthStore.getState().logout();
+    if (error.response?.status === 401 && error.config?.url !== "/api/v1/auth/login") {
+      const currentToken = useAuthStore.getState().accessToken;
+      const sentToken = error.config?.headers?.Authorization;
+      // An old in-flight request must not sign out a newly authenticated account.
+      if (!sentToken || sentToken === `Bearer ${currentToken}`) useAuthStore.getState().logout();
     }
     return Promise.reject(error);
   },

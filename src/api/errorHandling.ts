@@ -41,6 +41,10 @@ export function getApiErrorInfo(error: unknown): ApiErrorInfo {
     return {kind:status === 403 ? "unknown" : "validation",message:typeof detail === "string" ? detail : status === 409 ? "This record already exists or conflicts with current data." : "You do not have permission for this action.",status,requestId};
   }
 
+  if (status === 429) {
+    return { kind: "validation", message: "Too many sign-in attempts. Please wait one minute and try again.", status, requestId };
+  }
+
   if (status === 404) {
     return { kind: "not-found", message: "The requested resource was not found.", status, requestId };
   }
