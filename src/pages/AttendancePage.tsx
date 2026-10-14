@@ -43,7 +43,7 @@ export default function AttendancePage() {
     setSaved(false);
     try {
       const [studentPage, dailySummary] = await Promise.all([
-        getStudents({ page: 0, size: 100, status: "ACTIVE" }),
+        getStudents(schoolId, { page: 0, size: 100, status: "ACTIVE" }),
         getDailySummary(schoolId, dateToLoad),
       ]);
       setStudents(studentPage.content);
