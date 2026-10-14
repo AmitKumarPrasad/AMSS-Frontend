@@ -37,8 +37,8 @@ describe("api client", () => {
     );
   });
 
-  it("configures a bounded request timeout", () => {
-    expect(apiClient.defaults.timeout).toBe(15_000);
+  it("configures a bounded request timeout suitable for Render cold starts", () => {
+    expect(apiClient.defaults.timeout).toBe(60_000);
   });
 
   it("logs the user out on a 401 response", async () => {
