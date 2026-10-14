@@ -2,7 +2,7 @@ import axios, { type AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "../auth/authStore";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080";
-const API_TIMEOUT_MS = 15_000;
+const API_TIMEOUT_MS = 60_000;
 
 const createRequestId = () =>
   globalThis.crypto?.randomUUID?.() ??
